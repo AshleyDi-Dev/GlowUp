@@ -1,6 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { supabase } from '../lib/supabase'
 
 const tabs = [
   { label: 'Home',    to: '/home' },
@@ -39,11 +38,11 @@ const activeStyle = {
 }
 
 export default function NavBar() {
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
   const navigate = useNavigate()
 
   async function handleLogout() {
-    await supabase.auth.signOut()
+    await logout()
     navigate('/login')
   }
 

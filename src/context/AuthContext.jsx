@@ -19,8 +19,12 @@ export function AuthProvider({ children }) {
     return () => subscription.unsubscribe()
   }, [])
 
+  async function logout() {
+    await supabase.auth.signOut()
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading: user === undefined }}>
+    <AuthContext.Provider value={{ user, loading: user === undefined, logout }}>
       {children}
     </AuthContext.Provider>
   )
