@@ -35,11 +35,10 @@ export default function Login() {
     setErrors({})
     setLoading(true)
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-
-    setLoading(false)
+    const { data: signInData, error } = await supabase.auth.signInWithPassword({ email, password })
 
     if (error) {
+      setLoading(false)
       if (error.message.toLowerCase().includes('email not confirmed') ||
           error.message.toLowerCase().includes('not confirmed')) {
         setFormError('Please confirm your email before logging in. Check your inbox for the confirmation link.')
@@ -49,7 +48,20 @@ export default function Login() {
       return
     }
 
-    navigate('/home')
+    // Check whether this user has completed onboarding
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('has_onboarded')
+      .eq('id', signInData.user.id)
+      .maybeSingle()
+
+    setLoading(false)
+
+    if (profile?.has_onboarded) {
+      navigate('/home')
+    } else {
+      navigate('/onboarding')
+    }
   }
 
   function clearError(field) {
