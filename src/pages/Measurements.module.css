@@ -1,0 +1,139 @@
+/* ── Page shell ──────────────────────────────── */
+
+.page {
+  min-height: 100svh;
+  padding: var(--space-xl) var(--space-md) var(--space-2xl);
+}
+
+.container {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+/* ── Page header ─────────────────────────────── */
+
+.pageHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.heading {
+  font-size: var(--text-heading);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: var(--line-height-tight);
+}
+
+.subheading {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+}
+
+/* ── Unit toggle ─────────────────────────────── */
+
+.unitToggle {
+  display: inline-flex;
+  gap: 2px;
+  background: var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 2px;
+  align-self: flex-start;
+}
+
+.unitBtn {
+  padding: var(--space-xs) var(--space-md);
+  border-radius: calc(var(--radius-md) - 2px);
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.unitBtn:hover {
+  color: var(--color-text-primary);
+}
+
+.unitActive {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Section ─────────────────────────────────── */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.sectionLabel {
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+/* ── Field stack inside card ─────────────────── */
+
+.fieldStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.fieldRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.helper {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+  padding-left: 1px;
+}
+
+/* ── Actions ─────────────────────────────────── */
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* ── Save confirmation ───────────────────────── */
+
+.savedConfirmation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-success);
+  padding: var(--space-md) 0;
+}
+
+.savedCheck {
+  font-size: 1.1rem;
+}
+
+/* ── Save error ──────────────────────────────── */
+
+.saveError {
+  font-size: var(--text-caption);
+  color: var(--color-error);
+  line-height: var(--line-height-body);
+}

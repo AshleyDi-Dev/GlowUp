@@ -18,6 +18,7 @@ import Profile      from './pages/Profile'
 import Style        from './pages/Style'
 import OutfitBuilder from './pages/OutfitBuilder'
 import Saved        from './pages/Saved'
+import Measurements from './pages/Measurements'
 import Tokens       from './pages/Tokens'
 
 export default function App() {
@@ -50,6 +51,7 @@ export default function App() {
             <Route path="/style"               element={<Style />} />
             <Route path="/style/outfit-builder" element={<OutfitBuilder />} />
             <Route path="/saved"               element={<Saved />} />
+            <Route path="/measurements"        element={<Measurements />} />
           </Route>
 
           {/* Fallback */}
