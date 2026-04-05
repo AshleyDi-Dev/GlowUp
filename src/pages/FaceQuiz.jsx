@@ -42,7 +42,7 @@ const QUESTIONS = [
     tip: null,
     guide: null,
     options: [
-      { value: 'same_fj',      label: "They're about the same width" },
+      { value: 'same_fj',       label: "They're about the same width" },
       { value: 'forehead_wider', label: "My forehead is wider — my face narrows toward the chin" },
       { value: 'jaw_wider',     label: "My jaw is wider — my face narrows toward the forehead" },
       { value: 'both_narrow',   label: "Both are narrow — my cheekbones are really what stand out" },
@@ -77,29 +77,24 @@ const QUESTIONS = [
 // ── Scoring ──────────────────────────────────────────────────────
 
 const SCORE_MAP = {
-  // Q1 — widest part
   cheekbones:    { Diamond: 3, Oval: 1 },
   forehead_wide: { Heart: 3, Oval: 1 },
   same_all:      { Square: 2, Oblong: 1 },
   jaw_wide:      { Square: 3 },
   balanced_face: { Oval: 2, Round: 1 },
-  // Q2 — jawline
   soft_rounded:   { Round: 3, Oval: 1 },
   strong_angular: { Square: 3 },
   tapers_point:   { Heart: 2, Oval: 1 },
   narrow_tapered: { Diamond: 2, Oval: 1 },
   in_between:     { Oval: 2 },
-  // Q3 — forehead vs jaw
   same_fj:       { Square: 2, Oblong: 1 },
   forehead_wider: { Heart: 3, Oval: 1 },
   jaw_wider:     { Square: 2 },
   both_narrow:   { Diamond: 3 },
-  // Q4 — length vs width
   compact_round: { Round: 3 },
   much_longer:   { Oblong: 3 },
   balanced_len:  { Oval: 2, Square: 1 },
   long_narrow:   { Oblong: 2, Diamond: 1 },
-  // Q5 — cheekbones
   high_prominent: { Heart: 2, Diamond: 2, Oval: 1 },
   average_cb:     { Oval: 2, Square: 1 },
   not_prominent:  { Round: 2, Oblong: 1 },
@@ -116,10 +111,13 @@ function calculateResult(answers) {
     })
   })
 
-  return Object.entries(totals).reduce(
-    (best, [type, pts]) => pts > best.pts ? { type, pts } : best,
-    { type: 'Oval', pts: -1 }
-  ).type
+  const sorted = Object.entries(totals).sort((a, b) => b[1] - a[1])
+  const gap = sorted[0][1] - sorted[1][1]
+
+  return {
+    type:       sorted[0][0],
+    confidence: gap >= 4 ? 'Strong match' : 'Likely match',
+  }
 }
 
 // ── Result content ────────────────────────────────────────────────
@@ -127,43 +125,120 @@ function calculateResult(answers) {
 const RESULTS = {
   Oval: {
     label: 'Oval',
-    description: "Your face is gently balanced — slightly wider at the cheekbones, with a forehead that's marginally broader than the jaw and a softly tapered chin. Oval is the most versatile face shape, and most styles and proportions tend to work naturally with it. The main thing to consider is length — elongating or shortening depending on your preference.",
+    summary: 'Your face shape appears oval — naturally balanced with gently tapered proportions.',
+    description: "Your face is gently balanced — slightly wider at the cheekbones, with a forehead that's marginally broader than the jaw and a softly tapered chin. Oval is the most versatile face shape, and most styles and proportions tend to work naturally with it.",
+    whatThisMeans: [
+      'Most necklines suit you — scoop, V, square, or crew. You can choose by outfit and personal taste rather than face shape rules.',
+      'Glasses and earring shapes are largely preference here. Oval, rectangular, and cat-eye frames all sit well; long drops and hoops both work comfortably.',
+      'Haircut direction can go either way — layers add length, blunt cuts add fullness. Most lengths from short to long work well on your proportions.',
+    ],
   },
   Round: {
     label: 'Round',
-    description: "Your face is similar in width and length, with soft, full cheeks and a rounded jawline with minimal angles. The goal is usually to add the illusion of length and definition — angular frames, longer hairstyles, and V-necklines tend to be flattering. Soft horizontal elements can make roundness feel fuller.",
+    summary: 'Your face shape appears round — with soft, full cheeks and similar width and length.',
+    description: "Your face is similar in width and length, with soft, full cheeks and a rounded jawline with minimal angles. The goal is usually to add the illusion of length and definition — angular frames, longer hairstyles, and V-necklines tend to be flattering.",
+    whatThisMeans: [
+      'V-necks, deep scoop necks, and open collars draw the eye downward and add the illusion of length — they tend to be especially flattering.',
+      'Angular earrings — long drops, rectangles, and geometric shapes — add definition. Hoops and round studs can echo the roundness, so longer vertical styles tend to work better.',
+      'Rectangular or angular glasses frames add structure and contrast well with soft features. Side-swept fringes and long layers create flattering vertical lines.',
+    ],
   },
   Square: {
     label: 'Square',
-    description: "You have a strong, angular jaw that's close in width to your forehead, giving your face a structured, defined quality. This is a powerful, sharp silhouette. Softer styles — rounded frames, layered haircuts, and curved necklines — can balance the angles, while structured looks lean into them.",
+    summary: 'Your face shape appears square — with a strong, angular jaw and similar width at the forehead and jaw.',
+    description: "You have a strong, angular jaw that's close in width to your forehead, giving your face a structured, defined quality. Softer styles can balance the angles, while more structured looks lean into them.",
+    whatThisMeans: [
+      'Round and oval necklines soften the jawline — scoop, U-necks, and off-shoulder styles all work well. Very square or boxy necklines can feel heavy when the jaw is already strong.',
+      'Curved earrings — hoops, teardrop shapes, and round studs — complement the angular jaw naturally. Long, delicate drops also work by drawing the eye down.',
+      'Round and oval glasses frames soften the structure of the face. Layered haircuts that fall below the jaw add softness; blunt jaw-length cuts emphasise the angle.',
+    ],
   },
   Heart: {
     label: 'Heart',
-    description: "Your forehead is the widest part of your face, tapering down to a narrow, often pointed chin. High cheekbones are common with this shape. The aim is usually to add visual weight to the lower half — wider necklines, fuller lower hair, or statement earrings below the jaw all work well.",
+    summary: 'Your face shape appears heart-shaped — wider at the forehead, narrowing to a pointed chin.',
+    description: "Your forehead is the widest part of your face, tapering down to a narrow, often pointed chin. High cheekbones are common with this shape. The aim is usually to add visual weight to the lower half of the face.",
+    whatThisMeans: [
+      'Wider or off-shoulder necklines balance the broader forehead — sweetheart, boat, and wide scoop necks draw the eye down and outward effectively.',
+      'Earrings that are wider at the bottom — chandelier styles, teardrop shapes, and fan drops — add visual weight below the jaw, which balances the forehead width.',
+      'Round and oval frames with slightly wider bottoms work well for glasses. Haircuts with volume below the ear — waves, layers from the chin down — complement the heart shape naturally.',
+    ],
   },
   Oblong: {
     label: 'Oblong',
-    description: "Your face is noticeably longer than it is wide, with fairly consistent width from forehead to jaw. The goal is usually to add the illusion of width and break up the vertical length — side-swept styles, horizontal details, and wider frames all help balance the proportions.",
+    summary: 'Your face shape appears oblong — noticeably longer than it is wide with fairly consistent proportions throughout.',
+    description: "Your face is noticeably longer than it is wide, with fairly consistent width from forehead to jaw. The goal is usually to add the illusion of width and break up the vertical length.",
+    whatThisMeans: [
+      'Wider necklines — boat necks, wide scoop necks, and off-shoulder styles — add width and break up the vertical length of the face effectively.',
+      'Stud earrings, small hoops, and wide horizontal earring shapes add width at face level. Long drop earrings can elongate further, which tends not to be the goal.',
+      'Wider glasses frames and side-swept bangs or curtain fringes help break up the length. Short to medium haircut lengths suit better than very long straight styles.',
+    ],
   },
   Diamond: {
     label: 'Diamond',
-    description: "Your cheekbones are the standout feature — wide and prominent, with a narrow forehead and a tapered jaw below. This is a striking, angular shape. The goal is usually to add width at the forehead and chin to balance the cheekbone width — wider-brimmed styles and fuller hairstyles at the crown work well.",
+    summary: 'Your face shape appears diamond — with prominent cheekbones and a narrower forehead and jaw.',
+    description: "Your cheekbones are the standout feature — wide and prominent, with a narrow forehead and a tapered jaw below. The goal is usually to add width at the forehead and chin to balance the cheekbone width.",
+    whatThisMeans: [
+      'Wider necklines at forehead level — boat necks and straight-across necklines — help add width where the face is narrower and balance the cheekbone width.',
+      'Earrings that are wider at the top — studs, small hoops, and curved drops — add width at the forehead and jaw level. Avoid narrow drops that point straight down.',
+      'Rimless and oval frames that sit wide at the forehead work well. Haircuts with volume at the crown and jaw — layers, side-swept styles — balance the narrow top and bottom of the face.',
+    ],
   },
+}
+
+// ── Intro screen ──────────────────────────────────────────────────
+
+function IntroScreen({ onStart }) {
+  return (
+    <div className={styles.introPage}>
+      <div className={styles.introContainer}>
+        <div className={styles.introHeader}>
+          <p className={styles.introEyebrow}>Face quiz</p>
+          <h1 className={styles.introHeading}>Face shape</h1>
+          <p className={styles.introBody}>
+            This section helps identify your face shape so we can tailor recommendations for
+            necklines, glasses frames, earring styles, and haircut direction. Answer based on
+            how your face looks naturally — not how you wish it looked.
+          </p>
+        </div>
+        <div className={styles.introActions}>
+          <Button fullWidth onClick={onStart}>
+            Start face quiz
+          </Button>
+          <Link to="/analyze">
+            <Button variant="ghost" fullWidth>Back to Analyze</Button>
+          </Link>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 // ── Result screen ─────────────────────────────────────────────────
 
-function ResultScreen({ resultType, onSave, onRetake, saving, saved }) {
+function ResultScreen({ resultType, confidence, onSave, onRetake, saving, saved }) {
   const result = RESULTS[resultType] ?? RESULTS.Oval
 
   return (
     <div className={styles.resultPage}>
       <div className={styles.resultContainer}>
+
         <div className={styles.resultHeader}>
           <p className={styles.resultEyebrow}>Your face shape</p>
           <h1 className={styles.resultLabel}>{result.label}</h1>
+          <span className={styles.confidence}>{confidence}</span>
+          <p className={styles.resultSummary}>{result.summary}</p>
           <p className={styles.resultDescription}>{result.description}</p>
         </div>
+
+        <div className={styles.whatThisMeans}>
+          <p className={styles.sectionHeading}>What this means</p>
+          <ul className={styles.meansList}>
+            {result.whatThisMeans.map((point, i) => (
+              <li key={i}>{point}</li>
+            ))}
+          </ul>
+        </div>
+
         <div className={styles.resultActions}>
           {saved ? (
             <p className={styles.savedConfirmation} role="status">
@@ -174,17 +249,23 @@ function ResultScreen({ resultType, onSave, onRetake, saving, saved }) {
               Save result
             </Button>
           )}
-          <Button variant="ghost" fullWidth onClick={onRetake}>
+          <Link to="/analyze/hair" className={styles.fullWidth}>
+            <Button variant="ghost" fullWidth>Continue to hair quiz</Button>
+          </Link>
+          <button type="button" className={styles.textLink} onClick={onRetake}>
             Retake quiz
-          </Button>
-          <Link to="/analyze" className={styles.backLink}>
+          </button>
+          <Link to="/analyze" className={styles.textLink}>
             Back to Analyze
           </Link>
         </div>
+
       </div>
     </div>
   )
 }
+
+// ── Previous result screen ────────────────────────────────────────
 
 function PreviousResultScreen({ resultType, onRetake }) {
   const result = RESULTS[resultType] ?? RESULTS.Oval
@@ -192,19 +273,35 @@ function PreviousResultScreen({ resultType, onRetake }) {
   return (
     <div className={styles.resultPage}>
       <div className={styles.resultContainer}>
+
         <div className={styles.resultHeader}>
           <p className={styles.resultEyebrow}>Your saved result</p>
           <h1 className={styles.resultLabel}>{result.label}</h1>
+          <p className={styles.resultSummary}>{result.summary}</p>
           <p className={styles.resultDescription}>{result.description}</p>
         </div>
+
+        <div className={styles.whatThisMeans}>
+          <p className={styles.sectionHeading}>What this means</p>
+          <ul className={styles.meansList}>
+            {result.whatThisMeans.map((point, i) => (
+              <li key={i}>{point}</li>
+            ))}
+          </ul>
+        </div>
+
         <div className={styles.resultActions}>
-          <Button variant="ghost" fullWidth onClick={onRetake}>
+          <Link to="/analyze/hair" className={styles.fullWidth}>
+            <Button variant="ghost" fullWidth>Continue to hair quiz</Button>
+          </Link>
+          <button type="button" className={styles.textLink} onClick={onRetake}>
             Retake quiz
-          </Button>
-          <Link to="/analyze" className={styles.backLink}>
+          </button>
+          <Link to="/analyze" className={styles.textLink}>
             Back to Analyze
           </Link>
         </div>
+
       </div>
     </div>
   )
@@ -217,9 +314,10 @@ export default function FaceQuiz() {
 
   const [loading, setLoading]         = useState(true)
   const [savedResult, setSavedResult] = useState(null)
-  const [newResult, setNewResult]     = useState(null)
+  const [newResult, setNewResult]     = useState(null)   // { type, confidence }
   const [newAnswers, setNewAnswers]   = useState(null)
   const [skipPrev, setSkipPrev]       = useState(false)
+  const [quizStarted, setQuizStarted] = useState(false)
   const [saving, setSaving]           = useState(false)
   const [saved, setSaved]             = useState(false)
 
@@ -250,13 +348,13 @@ export default function FaceQuiz() {
       user_id:      user.id,
       quiz_type:    'face',
       answers_json: newAnswers,
-      result_json:  { type: newResult },
+      result_json:  { type: newResult.type, confidence: newResult.confidence },
       is_current:   true,
     })
     if (attemptError) console.error('[FaceQuiz] quiz_attempts error:', attemptError)
 
     const { error: summaryError } = await supabase.from('style_summary').upsert(
-      { user_id: user.id, face_shape: newResult },
+      { user_id: user.id, face_shape: newResult.type },
       { onConflict: 'user_id' }
     )
     if (summaryError) console.error('[FaceQuiz] style_summary error:', summaryError)
@@ -270,6 +368,7 @@ export default function FaceQuiz() {
     setNewAnswers(null)
     setSaved(false)
     setSkipPrev(true)
+    setQuizStarted(true)
   }
 
   if (loading) return null
@@ -277,7 +376,8 @@ export default function FaceQuiz() {
   if (newResult) {
     return (
       <ResultScreen
-        resultType={newResult}
+        resultType={newResult.type}
+        confidence={newResult.confidence}
         onSave={handleSave}
         onRetake={handleRetakeFromResult}
         saving={saving}
@@ -290,9 +390,13 @@ export default function FaceQuiz() {
     return (
       <PreviousResultScreen
         resultType={savedResult}
-        onRetake={() => setSkipPrev(true)}
+        onRetake={() => { setSkipPrev(true); setQuizStarted(false) }}
       />
     )
+  }
+
+  if (!quizStarted) {
+    return <IntroScreen onStart={() => setQuizStarted(true)} />
   }
 
   return (
