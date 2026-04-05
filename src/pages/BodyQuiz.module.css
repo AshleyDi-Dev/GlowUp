@@ -1,0 +1,83 @@
+/* ── Result page shell ───────────────────────── */
+
+.resultPage {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl) var(--space-md) var(--space-2xl);
+  background: var(--color-bg);
+}
+
+.resultContainer {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xl);
+}
+
+/* ── Result header ───────────────────────────── */
+
+.resultHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.resultEyebrow {
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.resultLabel {
+  font-size: var(--text-display);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+}
+
+.resultDescription {
+  font-size: var(--text-body);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+}
+
+/* ── Actions ─────────────────────────────────── */
+
+.resultActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+/* ── Saved confirmation ──────────────────────── */
+
+.savedConfirmation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-success);
+  padding: var(--space-md) 0;
+  width: 100%;
+}
+
+/* ── Back link ───────────────────────────────── */
+
+.backLink {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-xs);
+}
+
+.backLink:hover {
+  color: var(--color-text-primary);
+}
