@@ -1,0 +1,148 @@
+/* ── Page shell ──────────────────────────────── */
+
+.page {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+}
+
+/* ── Top bar ─────────────────────────────────── */
+
+.topBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-md) var(--space-sm);
+  position: sticky;
+  top: 0;
+  background: var(--color-bg);
+  z-index: 10;
+}
+
+.backBtn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.backBtn:hover {
+  background: var(--color-border);
+}
+
+.backBtn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.backPlaceholder {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+}
+
+.progressWrap {
+  flex: 1;
+}
+
+.stepCount {
+  flex-shrink: 0;
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-text-secondary);
+  min-width: 32px;
+  text-align: right;
+}
+
+/* ── Content container ───────────────────────── */
+
+.container {
+  flex: 1;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-md) var(--space-2xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+/* ── Question block ──────────────────────────── */
+
+.questionBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.questionTitle {
+  font-size: var(--text-heading);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+}
+
+/* ── Tip callout ─────────────────────────────── */
+
+.tip {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: var(--color-accent-muted);
+  border-radius: var(--radius-md);
+}
+
+.tipIcon {
+  flex-shrink: 0;
+  font-size: 0.9rem;
+  color: var(--color-accent);
+  margin-top: 1px;
+  line-height: 1.6;
+}
+
+.tipText {
+  font-size: var(--text-caption);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-body);
+}
+
+/* ── Visual guide ────────────────────────────── */
+
+.guide {
+  width: 100%;
+}
+
+/* ── Answer options ──────────────────────────── */
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* ── Navigation ──────────────────────────────── */
+
+.nav {
+  margin-top: auto;
+}
+
+/* ── Result placeholder ──────────────────────── */
+
+.resultPlaceholder {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  font-family: monospace;
+  word-break: break-all;
+}
