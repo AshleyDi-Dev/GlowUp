@@ -22,6 +22,144 @@ const COLOR_OPTIONS = [
   { value: 'col_treated',     label: 'Colour treated' },
 ]
 
+// ── Hair style illustrations ──────────────────────────────────────
+
+const SVG_PROPS = {
+  viewBox: '0 0 48 60',
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: '1.5',
+  strokeLinecap: 'round',
+  strokeLinejoin: 'round',
+  width: '100%',
+  height: '100%',
+  'aria-hidden': 'true',
+}
+
+const HAIR_STYLES = [
+  {
+    value: 'style_pixie',
+    label: 'Short pixie',
+    illustration: () => (
+      <svg {...SVG_PROPS}>
+        <ellipse cx="24" cy="24" rx="10" ry="12" />
+        <path d="M14,20 Q14,11 24,10 Q34,11 34,20" />
+        <path d="M14,21 L13,28 M34,21 L35,28" />
+        <path d="M19,11 L18,14 M24,10 L24,14 M29,11 L30,14" />
+      </svg>
+    ),
+  },
+  {
+    value: 'style_bob',
+    label: 'Short bob',
+    illustration: () => (
+      <svg {...SVG_PROPS}>
+        <ellipse cx="24" cy="24" rx="10" ry="12" />
+        <path d="M14,19 Q14,11 24,10 Q34,11 34,19" />
+        <path d="M14,19 L13,40 Q24,42 35,40 L34,19" />
+      </svg>
+    ),
+  },
+  {
+    value: 'style_medium',
+    label: 'Medium length',
+    illustration: () => (
+      <svg {...SVG_PROPS}>
+        <ellipse cx="24" cy="24" rx="10" ry="12" />
+        <path d="M14,19 Q14,11 24,10 Q34,11 34,19" />
+        <path d="M14,19 L12,52 Q24,54 36,52 L34,19" />
+      </svg>
+    ),
+  },
+  {
+    value: 'style_long_straight',
+    label: 'Long straight',
+    illustration: () => (
+      <svg {...SVG_PROPS}>
+        <ellipse cx="24" cy="20" rx="10" ry="12" />
+        <path d="M14,15 Q14,7 24,6 Q34,7 34,15" />
+        <path d="M14,15 L12,60 M34,15 L36,60 M12,60 L36,60" />
+      </svg>
+    ),
+  },
+  {
+    value: 'style_long_wavy',
+    label: 'Long wavy',
+    illustration: () => (
+      <svg {...SVG_PROPS}>
+        <ellipse cx="24" cy="20" rx="10" ry="12" />
+        <path d="M14,15 Q14,7 24,6 Q34,7 34,15" />
+        <path d="M14,15 Q10,24 14,33 Q18,42 13,51 Q11,56 12,60" />
+        <path d="M34,15 Q38,24 34,33 Q30,42 35,51 Q37,56 36,60" />
+        <path d="M12,60 L36,60" />
+      </svg>
+    ),
+  },
+  {
+    value: 'style_long_curly',
+    label: 'Long curly',
+    illustration: () => (
+      <svg {...SVG_PROPS}>
+        <ellipse cx="24" cy="20" rx="10" ry="12" />
+        <path d="M14,15 Q14,7 24,6 Q34,7 34,15" />
+        <path d="M14,15 Q7,23 13,31 Q19,37 12,46 Q6,53 11,60" />
+        <path d="M34,15 Q41,23 35,31 Q29,37 36,46 Q42,53 37,60" />
+      </svg>
+    ),
+  },
+  {
+    value: 'style_coily',
+    label: 'Coily / natural',
+    illustration: () => (
+      <svg {...SVG_PROPS}>
+        <path d="M24,4 Q44,4 45,22 Q45,44 24,46 Q3,44 3,22 Q3,4 24,4" />
+        <ellipse cx="24" cy="28" rx="9" ry="10" />
+      </svg>
+    ),
+  },
+  {
+    value: 'style_braids',
+    label: 'Braids / locs',
+    illustration: () => (
+      <svg {...SVG_PROPS}>
+        <ellipse cx="24" cy="20" rx="10" ry="12" />
+        <path d="M14,15 Q14,7 24,6 Q34,7 34,15" />
+        <line x1="16" y1="16" x2="14" y2="60" />
+        <line x1="24" y1="6"  x2="24" y2="60" />
+        <line x1="32" y1="16" x2="34" y2="60" />
+        <path d="M16,26 Q20,28 24,26 Q28,28 32,26" />
+        <path d="M15,38 Q20,40 24,38 Q28,40 33,38" />
+        <path d="M15,50 Q19,52 24,50 Q29,52 33,50" />
+      </svg>
+    ),
+  },
+  {
+    value: 'style_growing',
+    label: 'Currently growing out',
+    illustration: () => (
+      <svg {...SVG_PROPS}>
+        <ellipse cx="24" cy="24" rx="10" ry="12" />
+        <path d="M14,19 Q14,11 24,10 Q34,11 34,19" />
+        <path d="M14,19 L12,46 Q14,48 16,45 Q18,50 20,46" />
+        <path d="M34,19 L36,54 Q34,56 32,52 Q30,56 28,53" />
+      </svg>
+    ),
+  },
+  {
+    value: 'style_skip',
+    label: 'Prefer not to say',
+    illustration: () => (
+      <svg {...SVG_PROPS}>
+        <ellipse cx="24" cy="26" rx="10" ry="12" />
+        <path d="M16,17 Q24,11 32,17" strokeDasharray="2 3" />
+        <line x1="20" y1="46" x2="28" y2="46" />
+      </svg>
+    ),
+  },
+]
+
+const HAIR_STYLE_LABEL = Object.fromEntries(HAIR_STYLES.map(s => [s.value, s.label]))
+
 // ── Questions ────────────────────────────────────────────────────
 
 const QUESTIONS = [
@@ -312,6 +450,79 @@ function getProfileBullets(texture, density, porosity) {
   ]
 }
 
+// ── Style select screen ───────────────────────────────────────────
+
+function StyleSelectScreen({ onSelect, onBack }) {
+  const [selected, setSelected] = useState(null)
+
+  return (
+    <div className={styles.styleSelectPage}>
+      <div className={styles.styleSelectContainer}>
+
+        <div className={styles.styleSelectHeader}>
+          <button
+            type="button"
+            className={styles.styleSelectBack}
+            onClick={onBack}
+            aria-label="Go back"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <polyline points="13,4 7,10 13,16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <div>
+            <h2 className={styles.styleSelectHeading}>What does your hair look like right now?</h2>
+            <p className={styles.styleSelectBody}>This helps us understand your starting point. You can update this anytime.</p>
+          </div>
+        </div>
+
+        <div className={styles.styleGrid}>
+          {HAIR_STYLES.map(({ value, label, illustration: Illustration }) => (
+            <button
+              key={value}
+              type="button"
+              className={[styles.styleCard, selected === value ? styles.styleCardSelected : ''].filter(Boolean).join(' ')}
+              onClick={() => setSelected(value)}
+              aria-pressed={selected === value}
+            >
+              <div className={styles.styleIllustration}>
+                <Illustration />
+              </div>
+              <span className={styles.styleLabel}>{label}</span>
+            </button>
+          ))}
+        </div>
+
+        <div className={styles.styleSelectNav}>
+          <Button fullWidth disabled={!selected} onClick={() => selected && onSelect(selected)}>
+            Continue
+          </Button>
+          <button type="button" className={styles.textLink} onClick={() => onSelect(null)}>
+            Skip this step
+          </button>
+        </div>
+
+      </div>
+    </div>
+  )
+}
+
+// ── Upgrade teaser ────────────────────────────────────────────────
+
+function UpgradeTeaser() {
+  return (
+    <div className={styles.teaser}>
+      <p className={styles.teaserEyebrow}>Coming soon</p>
+      <p className={styles.teaserHeading}>Personalised haircut and colour recommendations</p>
+      <p className={styles.teaserBody}>
+        We'll combine your face shape, hair profile, and colour season to suggest cuts and
+        colours that are specifically suited to you.
+      </p>
+      <Button variant="ghost" disabled>Coming soon</Button>
+    </div>
+  )
+}
+
 // ── Intro screen ─────────────────────────────────────────────────
 
 function IntroScreen({ onStart }) {
@@ -342,8 +553,9 @@ function IntroScreen({ onStart }) {
 // ── Shared result content ─────────────────────────────────────────
 
 function ProfileContent({ result, eyebrow }) {
-  const { texture, density, porosity, currentColor } = result
+  const { texture, density, porosity, currentColor, hairStyle } = result
   const colorLabel = currentColor ? COLOR_LABEL[currentColor] : null
+  const styleLabel = hairStyle   ? HAIR_STYLE_LABEL[hairStyle] : null
   const summary    = getProfileSummary(texture, density, porosity)
   const bullets    = getProfileBullets(texture, density, porosity)
 
@@ -361,6 +573,12 @@ function ProfileContent({ result, eyebrow }) {
             <>
               <span className={styles.dot} aria-hidden="true">·</span>
               {colorLabel}
+            </>
+          )}
+          {styleLabel && (
+            <>
+              <span className={styles.dot} aria-hidden="true">·</span>
+              {styleLabel}
             </>
           )}
         </h1>
@@ -436,6 +654,7 @@ function HistoryPanel() {
             <span className={styles.historyDate}>{formatDate(a.created_at)}</span>
             <span className={styles.historyCombo}>
               {r.texture} · {r.density} density · {r.porosity} porosity
+              {r.hairStyle && ` · ${HAIR_STYLE_LABEL[r.hairStyle] ?? r.hairStyle}`}
               {a.is_current && <span className={styles.historyCurrent}>Current</span>}
             </span>
           </li>
@@ -527,6 +746,7 @@ function ResultScreen({ result, onSave, onRetake, onReset, saving, saved, resett
           saved={saved}
           resetting={resetting}
         />
+        <UpgradeTeaser />
       </div>
     </div>
   )
@@ -592,6 +812,8 @@ function PreviousResultScreen({ result, onRetake, onReset, resetting }) {
           </Link>
         </div>
 
+        <UpgradeTeaser />
+
       </div>
     </div>
   )
@@ -604,6 +826,7 @@ export default function HairQuiz() {
 
   const [loading, setLoading]         = useState(true)
   const [quizStarted, setQuizStarted] = useState(false)
+  const [styleStep, setStyleStep]     = useState(false)
   const [savedResult, setSavedResult] = useState(null)
   const [newResult, setNewResult]     = useState(null)
   const [newAnswers, setNewAnswers]   = useState(null)
@@ -616,7 +839,7 @@ export default function HairQuiz() {
     async function load() {
       const { data } = await supabase
         .from('style_summary')
-        .select('hair_texture, hair_density, hair_porosity, hair_current_color, hair_natural_color, hair_styling_tendency, hair_style_hold')
+        .select('hair_texture, hair_density, hair_porosity, hair_current_color, hair_natural_color, hair_styling_tendency, hair_style_hold, hair_style')
         .eq('user_id', user.id)
         .maybeSingle()
 
@@ -629,6 +852,7 @@ export default function HairQuiz() {
           naturalColor:    data.hair_natural_color    ?? null,
           stylingTendency: data.hair_styling_tendency ?? null,
           styleHold:       data.hair_style_hold       ?? null,
+          hairStyle:       data.hair_style            ?? null,
         })
       }
       setLoading(false)
@@ -637,9 +861,19 @@ export default function HairQuiz() {
   }, [user.id])
 
   function handleComplete(answers) {
-    const result = calculateResult(answers)
     setNewAnswers(answers)
-    setNewResult(result)
+    setStyleStep(true)
+  }
+
+  function handleStyleSelect(styleValue) {
+    setStyleStep(false)
+    setNewResult({ ...calculateResult(newAnswers), hairStyle: styleValue })
+  }
+
+  function handleStyleBack() {
+    setStyleStep(false)
+    setNewAnswers(null)
+    // quizStarted stays true so QuizEngine re-mounts at the last question
   }
 
   async function handleSave() {
@@ -673,6 +907,16 @@ export default function HairQuiz() {
     }
 
     // Step 3 — sync the denormalised style_summary so the hub page stays current.
+    console.log('[HairQuiz] saving to style_summary:', {
+      hair_texture:          newResult.texture,
+      hair_density:          newResult.density,
+      hair_porosity:         newResult.porosity,
+      hair_current_color:    newResult.currentColor,
+      hair_natural_color:    newResult.naturalColor,
+      hair_styling_tendency: newResult.stylingTendency,
+      hair_style_hold:       newResult.styleHold,
+      hair_style:            newResult.hairStyle,
+    })
     const { error: summaryError } = await supabase
       .from('style_summary')
       .upsert(
@@ -685,6 +929,7 @@ export default function HairQuiz() {
           hair_natural_color:     newResult.naturalColor,
           hair_styling_tendency:  newResult.stylingTendency,
           hair_style_hold:        newResult.styleHold,
+          hair_style:             newResult.hairStyle,
         },
         { onConflict: 'user_id' }
       )
@@ -722,6 +967,7 @@ export default function HairQuiz() {
         hair_natural_color:     null,
         hair_styling_tendency:  null,
         hair_style_hold:        null,
+        hair_style:             null,
       },
       { onConflict: 'user_id' }
     )
@@ -748,6 +994,16 @@ export default function HairQuiz() {
         saving={saving}
         saved={saved}
         resetting={resetting}
+      />
+    )
+  }
+
+  // Quiz answers collected — show style selection before result
+  if (styleStep) {
+    return (
+      <StyleSelectScreen
+        onSelect={handleStyleSelect}
+        onBack={handleStyleBack}
       />
     )
   }
