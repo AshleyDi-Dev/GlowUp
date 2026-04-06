@@ -397,62 +397,136 @@ function ProfileContent({ result, eyebrow }) {
   )
 }
 
+// ── History ───────────────────────────────────────────────────────
+
+function formatDate(iso) {
+  return new Date(iso).toLocaleDateString('en-GB', {
+    day: 'numeric', month: 'short', year: 'numeric',
+  })
+}
+
+function HistoryPanel() {
+  const { user } = useAuth()
+  const [loading, setLoading]   = useState(true)
+  const [attempts, setAttempts] = useState([])
+
+  useEffect(() => {
+    async function load() {
+      const { data } = await supabase
+        .from('quiz_attempts')
+        .select('id, created_at, result_json, is_current')
+        .eq('user_id', user.id)
+        .eq('quiz_type', 'hair')
+        .order('created_at', { ascending: false })
+      setAttempts(data ?? [])
+      setLoading(false)
+    }
+    load()
+  }, [user.id])
+
+  if (loading) return <p className={styles.historyEmpty}>Loading…</p>
+  if (!attempts.length) return <p className={styles.historyEmpty}>No previous attempts yet.</p>
+
+  return (
+    <ul className={styles.historyList}>
+      {attempts.map(a => {
+        const r = a.result_json ?? {}
+        return (
+          <li key={a.id} className={styles.historyItem}>
+            <span className={styles.historyDate}>{formatDate(a.created_at)}</span>
+            <span className={styles.historyCombo}>
+              {r.texture} · {r.density} density · {r.porosity} porosity
+              {a.is_current && <span className={styles.historyCurrent}>Current</span>}
+            </span>
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
+
 // ── Result screen ─────────────────────────────────────────────────
 
-function ResultScreen({ result, onSave, onRetake, onReset, saving, saved, resetting }) {
+function ResultActions({ onSave, onRetake, onReset, saving, saved, resetting }) {
   const [confirmReset, setConfirmReset] = useState(false)
+  const [showHistory, setShowHistory]   = useState(false)
 
+  return (
+    <div className={styles.resultActions}>
+      {saved ? (
+        <p className={styles.savedConfirmation} role="status">
+          <span aria-hidden="true">✓</span> Result saved
+        </p>
+      ) : (
+        <Button fullWidth loading={saving} onClick={onSave}>
+          Save result
+        </Button>
+      )}
+
+      <Link to="/analyze/color" className={styles.fullWidth}>
+        <Button variant="ghost" fullWidth>Continue to colour quiz</Button>
+      </Link>
+
+      {confirmReset ? (
+        <div className={styles.resetConfirm}>
+          <p className={styles.resetConfirmText}>
+            Your quiz history will be preserved — this only clears your current active profile.
+          </p>
+          <Button variant="destructive" fullWidth loading={resetting} onClick={onReset}>
+            Yes, reset my hair profile
+          </Button>
+          <button
+            type="button"
+            className={styles.textLink}
+            onClick={() => setConfirmReset(false)}
+          >
+            Cancel
+          </button>
+        </div>
+      ) : (
+        <Button variant="ghost" fullWidth onClick={() => setConfirmReset(true)}>
+          Reset section
+        </Button>
+      )}
+
+      <button type="button" className={styles.textLink} onClick={onRetake}>
+        Retake quiz
+      </button>
+
+      <button
+        type="button"
+        className={styles.textLink}
+        onClick={() => setShowHistory(h => !h)}
+      >
+        {showHistory ? 'Hide history' : 'View history'}
+      </button>
+
+      {showHistory && (
+        <div className={styles.historyPanel}>
+          <HistoryPanel />
+        </div>
+      )}
+
+      <Link to="/analyze" className={styles.textLink}>
+        Back to Analyze
+      </Link>
+    </div>
+  )
+}
+
+function ResultScreen({ result, onSave, onRetake, onReset, saving, saved, resetting }) {
   return (
     <div className={styles.resultPage}>
       <div className={styles.resultContainer}>
-
         <ProfileContent result={result} eyebrow="Your hair profile" />
-
-        <div className={styles.resultActions}>
-          {saved ? (
-            <p className={styles.savedConfirmation} role="status">
-              <span aria-hidden="true">✓</span> Result saved
-            </p>
-          ) : (
-            <Button fullWidth loading={saving} onClick={onSave}>
-              Save result
-            </Button>
-          )}
-
-          <Link to="/analyze/color" className={styles.fullWidth}>
-            <Button variant="ghost" fullWidth>Continue to colour quiz</Button>
-          </Link>
-
-          {confirmReset ? (
-            <div className={styles.resetConfirm}>
-              <p className={styles.resetConfirmText}>
-                This will permanently clear your hair profile. You'll start fresh from the beginning.
-              </p>
-              <Button variant="destructive" fullWidth loading={resetting} onClick={onReset}>
-                Yes, reset my hair data
-              </Button>
-              <button
-                type="button"
-                className={styles.textLink}
-                onClick={() => setConfirmReset(false)}
-              >
-                Cancel
-              </button>
-            </div>
-          ) : (
-            <Button variant="ghost" fullWidth onClick={() => setConfirmReset(true)}>
-              Reset section
-            </Button>
-          )}
-
-          <button type="button" className={styles.textLink} onClick={onRetake}>
-            Retake quiz
-          </button>
-          <Link to="/analyze" className={styles.textLink}>
-            Back to Analyze
-          </Link>
-        </div>
-
+        <ResultActions
+          onSave={onSave}
+          onRetake={onRetake}
+          onReset={onReset}
+          saving={saving}
+          saved={saved}
+          resetting={resetting}
+        />
       </div>
     </div>
   )
@@ -460,6 +534,7 @@ function ResultScreen({ result, onSave, onRetake, onReset, saving, saved, resett
 
 function PreviousResultScreen({ result, onRetake, onReset, resetting }) {
   const [confirmReset, setConfirmReset] = useState(false)
+  const [showHistory, setShowHistory]   = useState(false)
 
   return (
     <div className={styles.resultPage}>
@@ -475,10 +550,10 @@ function PreviousResultScreen({ result, onRetake, onReset, resetting }) {
           {confirmReset ? (
             <div className={styles.resetConfirm}>
               <p className={styles.resetConfirmText}>
-                This will permanently clear your hair profile. You'll start fresh from the beginning.
+                Your quiz history will be preserved — this only clears your current active profile.
               </p>
               <Button variant="destructive" fullWidth loading={resetting} onClick={onReset}>
-                Yes, reset my hair data
+                Yes, reset my hair profile
               </Button>
               <button
                 type="button"
@@ -497,6 +572,21 @@ function PreviousResultScreen({ result, onRetake, onReset, resetting }) {
           <button type="button" className={styles.textLink} onClick={onRetake}>
             Retake quiz
           </button>
+
+          <button
+            type="button"
+            className={styles.textLink}
+            onClick={() => setShowHistory(h => !h)}
+          >
+            {showHistory ? 'Hide history' : 'View history'}
+          </button>
+
+          {showHistory && (
+            <div className={styles.historyPanel}>
+              <HistoryPanel />
+            </div>
+          )}
+
           <Link to="/analyze" className={styles.textLink}>
             Back to Analyze
           </Link>
@@ -555,29 +645,50 @@ export default function HairQuiz() {
   async function handleSave() {
     setSaving(true)
 
-    const { error: attemptError } = await supabase.from('quiz_attempts').insert({
-      user_id:      user.id,
-      quiz_type:    'hair',
-      answers_json: newAnswers,
-      result_json:  newResult,
-      is_current:   true,
-    })
-    if (attemptError) console.error('[HairQuiz] quiz_attempts error:', attemptError)
+    // Step 1 — mark all current hair attempts as not current.
+    // Filtering by is_current = true means this is a no-op on first save
+    // (0 rows matched, no error) and only touches the one active row on retake.
+    const { error: prevError } = await supabase
+      .from('quiz_attempts')
+      .update({ is_current: false })
+      .eq('user_id', user.id)
+      .eq('quiz_type', 'hair')
+      .eq('is_current', true)
+    if (prevError) console.error('[HairQuiz] update prev attempts:', prevError.message)
 
-    const { error: summaryError } = await supabase.from('style_summary').upsert(
-      {
-        user_id:                user.id,
-        hair_texture:           newResult.texture,
-        hair_density:           newResult.density,
-        hair_porosity:          newResult.porosity,
-        hair_current_color:     newResult.currentColor,
-        hair_natural_color:     newResult.naturalColor,
-        hair_styling_tendency:  newResult.stylingTendency,
-        hair_style_hold:        newResult.styleHold,
-      },
-      { onConflict: 'user_id' }
-    )
-    if (summaryError) console.error('[HairQuiz] style_summary error:', summaryError)
+    // Step 2 — insert the new attempt. Always a new row — never upsert or overwrite.
+    const { error: insertError } = await supabase
+      .from('quiz_attempts')
+      .insert({
+        user_id:      user.id,
+        quiz_type:    'hair',
+        answers_json: newAnswers,
+        result_json:  newResult,
+        is_current:   true,
+      })
+    if (insertError) {
+      console.error('[HairQuiz] insert attempt:', insertError.message)
+      setSaving(false)
+      return  // don't show "saved" if the row wasn't written
+    }
+
+    // Step 3 — sync the denormalised style_summary so the hub page stays current.
+    const { error: summaryError } = await supabase
+      .from('style_summary')
+      .upsert(
+        {
+          user_id:                user.id,
+          hair_texture:           newResult.texture,
+          hair_density:           newResult.density,
+          hair_porosity:          newResult.porosity,
+          hair_current_color:     newResult.currentColor,
+          hair_natural_color:     newResult.naturalColor,
+          hair_styling_tendency:  newResult.stylingTendency,
+          hair_style_hold:        newResult.styleHold,
+        },
+        { onConflict: 'user_id' }
+      )
+    if (summaryError) console.error('[HairQuiz] style_summary:', summaryError.message)
 
     setSaving(false)
     setSaved(true)
@@ -592,6 +703,14 @@ export default function HairQuiz() {
 
   async function handleReset() {
     setResetting(true)
+
+    // Mark all hair attempts as not current — rows are preserved, never deleted
+    const { error: attemptsError } = await supabase
+      .from('quiz_attempts')
+      .update({ is_current: false })
+      .eq('user_id', user.id)
+      .eq('quiz_type', 'hair')
+    if (attemptsError) console.error('[HairQuiz] reset attempts error:', attemptsError)
 
     const { error } = await supabase.from('style_summary').upsert(
       {
