@@ -7,6 +7,21 @@ import Button from '../components/Button'
 import { HairTextureGuide } from '../components/HairGuide'
 import styles from './HairQuiz.module.css'
 
+// ── Shared options ───────────────────────────────────────────────
+
+const COLOR_OPTIONS = [
+  { value: 'col_black',       label: 'Black' },
+  { value: 'col_dark_brown',  label: 'Dark brown' },
+  { value: 'col_med_brown',   label: 'Medium brown' },
+  { value: 'col_light_brown', label: 'Light brown' },
+  { value: 'col_blonde',      label: 'Blonde' },
+  { value: 'col_red',         label: 'Red' },
+  { value: 'col_auburn',      label: 'Auburn' },
+  { value: 'col_grey',        label: 'Grey' },
+  { value: 'col_white',       label: 'White' },
+  { value: 'col_treated',     label: 'Colour treated' },
+]
+
 // ── Questions ────────────────────────────────────────────────────
 
 const QUESTIONS = [
@@ -58,6 +73,17 @@ const QUESTIONS = [
   },
   {
     id: 'q5',
+    title: 'How would you describe the thickness of a single strand of your hair?',
+    tip: 'Try this → Pull out a single strand and hold it between your fingers. You can also lay it on a white surface and compare it to a piece of thread.',
+    guide: null,
+    options: [
+      { value: 'sth_fine',   label: 'Fine — individual strands are very thin, almost invisible' },
+      { value: 'sth_medium', label: 'Medium — strands are neither particularly thin nor thick' },
+      { value: 'sth_coarse', label: 'Coarse — strands are thick and strong, very noticeable' },
+    ],
+  },
+  {
+    id: 'q6',
     title: 'When you wet your hair in the shower, how quickly does it absorb water?',
     tip: 'Try this → Drop a single clean hair (no product) into a glass of water and wait 2 minutes. Floats at the top → Low porosity. Sinks slowly to the middle → Medium porosity. Sinks straight to the bottom → High porosity.',
     guide: null,
@@ -68,7 +94,7 @@ const QUESTIONS = [
     ],
   },
   {
-    id: 'q6',
+    id: 'q7',
     title: 'How does your hair feel after it dries without any products?',
     tip: null,
     guide: null,
@@ -79,7 +105,7 @@ const QUESTIONS = [
     ],
   },
   {
-    id: 'q7',
+    id: 'q8',
     title: 'How long does your hair take to dry naturally?',
     tip: null,
     guide: null,
@@ -87,6 +113,47 @@ const QUESTIONS = [
       { value: 'dry_low',    label: 'Ages — it stays wet for hours' },
       { value: 'dry_medium', label: 'Average — a couple of hours' },
       { value: 'dry_high',   label: 'Really quickly — it dries fast' },
+    ],
+  },
+  {
+    id: 'q9',
+    title: 'What is your current hair color?',
+    tip: null,
+    guide: null,
+    options: COLOR_OPTIONS,
+  },
+  {
+    id: 'q10',
+    title: 'What is your natural hair color?',
+    tip: null,
+    guide: null,
+    optional: true,
+    options: [
+      { value: 'nat_same',        label: 'Same as current' },
+      ...COLOR_OPTIONS,
+    ],
+  },
+  {
+    id: 'q11',
+    title: 'How would you describe your hair day to day?',
+    tip: null,
+    guide: null,
+    options: [
+      { value: 'sty_dry',      label: 'Tends to get dry and frizzy — needs moisture' },
+      { value: 'sty_oily',     label: 'Gets oily quickly — needs frequent washing' },
+      { value: 'sty_balanced', label: 'Pretty balanced — not particularly dry or oily' },
+      { value: 'sty_frizzy',   label: 'Frizzy in humidity but not dry overall' },
+    ],
+  },
+  {
+    id: 'q12',
+    title: 'Does your hair hold styles well?',
+    tip: null,
+    guide: null,
+    options: [
+      { value: 'hld_poor',   label: 'Not really — styles drop within an hour or two' },
+      { value: 'hld_medium', label: 'Somewhat — holds for a while but falls eventually' },
+      { value: 'hld_good',   label: 'Yes — styles stay put all day without much effort' },
     ],
   },
 ]
@@ -101,9 +168,9 @@ const TEXTURE_MAP = {
 }
 
 const DENSITY_MAP = {
-  den_fine:    'Fine',   sca_easily:  'Fine',
-  den_medium:  'Medium', sca_parting: 'Medium',
-  den_thick:   'Thick',  sca_notatal: 'Thick',
+  den_fine:    'Fine',   sca_easily:  'Fine',   sth_fine:   'Fine',
+  den_medium:  'Medium', sca_parting: 'Medium', sth_medium: 'Medium',
+  den_thick:   'Thick',  sca_notatal: 'Thick',  sth_coarse: 'Thick',
 }
 
 const POROSITY_MAP = {
@@ -126,9 +193,13 @@ function tally(answers, map) {
 
 function calculateResult(answers) {
   return {
-    texture:  tally(answers, TEXTURE_MAP),
-    density:  tally(answers, DENSITY_MAP),
-    porosity: tally(answers, POROSITY_MAP),
+    texture:         tally(answers, TEXTURE_MAP),
+    density:         tally(answers, DENSITY_MAP),
+    porosity:        tally(answers, POROSITY_MAP),
+    currentColor:    answers.q9  ?? null,
+    naturalColor:    answers.q10 ?? null,
+    stylingTendency: answers.q11 ?? null,
+    styleHold:       answers.q12 ?? null,
   }
 }
 
@@ -313,15 +384,19 @@ export default function HairQuiz() {
     async function load() {
       const { data } = await supabase
         .from('style_summary')
-        .select('hair_texture, hair_density, hair_porosity')
+        .select('hair_texture, hair_density, hair_porosity, hair_current_color, hair_natural_color, hair_styling_tendency, hair_style_hold')
         .eq('user_id', user.id)
         .maybeSingle()
 
       if (data?.hair_texture) {
         setSavedResult({
-          texture:  data.hair_texture,
-          density:  data.hair_density,
-          porosity: data.hair_porosity,
+          texture:         data.hair_texture,
+          density:         data.hair_density,
+          porosity:        data.hair_porosity,
+          currentColor:    data.hair_current_color    ?? null,
+          naturalColor:    data.hair_natural_color    ?? null,
+          stylingTendency: data.hair_styling_tendency ?? null,
+          styleHold:       data.hair_style_hold       ?? null,
         })
       }
       setLoading(false)
@@ -349,10 +424,14 @@ export default function HairQuiz() {
 
     const { error: summaryError } = await supabase.from('style_summary').upsert(
       {
-        user_id:       user.id,
-        hair_texture:  newResult.texture,
-        hair_density:  newResult.density,
-        hair_porosity: newResult.porosity,
+        user_id:                user.id,
+        hair_texture:           newResult.texture,
+        hair_density:           newResult.density,
+        hair_porosity:          newResult.porosity,
+        hair_current_color:     newResult.currentColor,
+        hair_natural_color:     newResult.naturalColor,
+        hair_styling_tendency:  newResult.stylingTendency,
+        hair_style_hold:        newResult.styleHold,
       },
       { onConflict: 'user_id' }
     )

@@ -48,7 +48,7 @@ export default function QuizEngine({
   }
 
   function handleNext() {
-    if (!selected) return
+    if (!selected && !current.optional) return
     if (isLast) {
       onComplete(answers)
     } else {
@@ -156,10 +156,12 @@ export default function QuizEngine({
         <div className={styles.nav}>
           <Button
             fullWidth
-            disabled={!selected}
+            disabled={!selected && !current.optional}
             onClick={handleNext}
           >
-            {isLast ? 'See my results' : 'Next'}
+            {isLast
+              ? (selected ? 'See my results' : 'Skip & see results')
+              : (selected ? 'Next' : 'Skip')}
           </Button>
         </div>
       </div>
