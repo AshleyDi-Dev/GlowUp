@@ -331,13 +331,13 @@ function PaletteStrip({ colors }) {
 
 // ── Upgrade teaser ────────────────────────────────────────────────
 
-function UpgradeTeaser({ subtype }) {
+function UpgradeTeaser() {
   return (
     <div className={styles.teaser}>
-      <p className={styles.teaserEyebrow}>Go deeper</p>
-      <p className={styles.teaserHeading}>{subtype}</p>
+      <p className={styles.teaserEyebrow}>Want to go deeper?</p>
       <p className={styles.teaserBody}>
-        Your full 12-season analysis gives you a precise subtype — like <em>{subtype}</em> — with a more tailored palette and specific guidance.
+        Your full 12-season analysis gives you a precise subtype — like{' '}
+        <em>Soft Autumn</em> or <em>Deep Winter</em> — with a more tailored palette.
       </p>
       <Button variant="ghost" disabled>
         Coming soon
@@ -413,7 +413,7 @@ function ResultScreen({ season, onSave, onRetake, saving, saved }) {
           </Link>
         </div>
 
-        <UpgradeTeaser subtype={result.teaser} />
+        <UpgradeTeaser />
 
       </div>
     </div>
@@ -447,7 +447,7 @@ function PreviousResultScreen({ season, onRetake }) {
           </Link>
         </div>
 
-        <UpgradeTeaser subtype={result.teaser} />
+        <UpgradeTeaser />
 
       </div>
     </div>
