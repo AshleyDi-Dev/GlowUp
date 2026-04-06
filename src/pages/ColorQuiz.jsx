@@ -133,137 +133,180 @@ const QUESTIONS = [
 
 // ── Scoring ──────────────────────────────────────────────────────
 
-const SCORE_MAP = {
-  // Q1 — jewelry metal
-  gold_better:   { Spring: 2, Autumn: 2 },
-  silver_better: { Summer: 2, Winter: 2 },
-  both_metal:    {},
-  // Q2 — vein color
-  bluish_purple: { Summer: 2, Winter: 2 },
-  greenish:      { Spring: 2, Autumn: 2 },
-  mix_veins:     {},
-  // Q3 — white vs cream
-  bright_white:  { Summer: 2, Winter: 2 },
-  cream_white:   { Spring: 2, Autumn: 2 },
-  both_whites:   {},
-  // Q4 — compliment colors
-  cool_compliment: { Summer: 2, Winter: 2 },
-  warm_compliment: { Spring: 2, Autumn: 2 },
-  both_compliment: {},
-  // Q5 — eye color
-  eyes_light_blue:  { Summer: 3, Winter: 1 },
-  eyes_green:       { Spring: 2, Autumn: 1 },
-  eyes_light_brown: { Spring: 1, Autumn: 2 },
-  eyes_dark_brown:  { Autumn: 2, Winter: 2 },
-  eyes_very_dark:   { Winter: 3 },
+// ── Scoring ──────────────────────────────────────────────────────
+//
+// Axis 1 — Warm vs Cool
+//   Each answer votes +1 warm or +1 cool. Ties broken by jewelry
+//   preference (q1) and eye color (q5), which are the strongest
+//   physical indicators.
+//
+// Axis 2 — Depth (light → deep) and Contrast (low → high)
+//   These narrow the quadrant to a specific season.
+//
+//   Warm + light/medium depth + low/medium contrast  → Spring
+//   Cool + light/medium depth + low/medium contrast  → Summer
+//   Warm + medium/deep depth  + low/medium contrast  → Autumn
+//   Cool + medium/deep depth  + high contrast        → Winter
+
+// Maps each answer value to its warm/cool vote (positive = warm, negative = cool, 0 = neutral).
+// Weighted so the strongest indicators (jewelry, veins, eye color) count more.
+const WARMTH = {
+  // Q1 — jewelry (strong indicator, weight 2)
+  gold_better:   2,
+  silver_better: -2,
+  both_metal:    0,
+  // Q2 — veins (strong indicator, weight 2)
+  bluish_purple: -2,
+  greenish:       2,
+  mix_veins:      0,
+  // Q3 — white vs cream (weight 1)
+  bright_white: -1,
+  cream_white:   1,
+  both_whites:   0,
+  // Q4 — compliment colors (weight 1)
+  cool_compliment: -1,
+  warm_compliment:  1,
+  both_compliment:  0,
+  // Q5 — eye color (strong indicator, weight 2)
+  eyes_light_blue:   -2,
+  eyes_green:        -1,
+  eyes_light_brown:   1,
+  eyes_dark_brown:    1,
+  eyes_very_dark:     0,  // dark eyes appear in both deep warm and deep cool
+}
+
+// Maps each answer value to a depth score: 0 = light, 1 = medium, 2 = deep.
+const DEPTH = {
   // Q6 — overall coloring
-  very_light:     { Spring: 3, Summer: 3 },
-  medium_overall: { Spring: 1, Summer: 1, Autumn: 1, Winter: 1 },
-  deep_overall:   { Autumn: 2, Winter: 3 },
-  high_contrast:  { Winter: 3 },
+  very_light:     0,
+  medium_overall: 1,
+  deep_overall:   2,
+  high_contrast:  1,  // high contrast often reads as medium depth overall
   // Q7 — sun reaction
-  burns_fair: { Spring: 2, Summer: 2 },
-  tan_golden: { Spring: 1, Autumn: 2 },
-  tan_deeply: { Autumn: 1, Winter: 2 },
-  deep_skin:  { Autumn: 1, Winter: 2 },
+  burns_fair: 0,
+  tan_golden: 1,
+  tan_deeply: 2,
+  deep_skin:  2,
+}
+
+// Maps each answer value to a contrast score: 0 = low, 1 = medium, 2 = high.
+const CONTRAST = {
   // Q8 — contrast between features
-  very_little_c: { Summer: 2, Autumn: 2 },
-  moderate_c:    { Spring: 1, Summer: 1, Autumn: 1, Winter: 1 },
-  high_c:        { Winter: 3 },
-  // Q9 — bold colors
-  overwhelm:    { Summer: 2, Autumn: 2 },
-  suit_well:    { Spring: 2, Winter: 2 },
-  depends_bold: { Spring: 1, Summer: 1, Autumn: 1, Winter: 1 },
-  // Q10 — dark vs light
-  dark_better:  { Winter: 2, Autumn: 1 },
-  light_better: { Spring: 2, Summer: 2 },
-  both_depth:   {},
+  very_little_c: 0,
+  moderate_c:    1,
+  high_c:        2,
+  // Q9 — bold colors (proxy for contrast tolerance)
+  overwhelm:    0,
+  suit_well:    2,
+  depends_bold: 1,
+  // Q10 — dark vs light near face
+  dark_better:  2,
+  light_better: 0,
+  both_depth:   1,
 }
 
 function calculateResult(answers) {
-  const totals = { Spring: 0, Summer: 0, Autumn: 0, Winter: 0 }
+  const vals = Object.values(answers)
 
-  Object.values(answers).forEach(value => {
-    const scores = SCORE_MAP[value] ?? {}
-    Object.entries(scores).forEach(([season, pts]) => {
-      totals[season] += pts
-    })
-  })
+  // ── Axis 1: warmth ────────────────────────────────────────────
+  const warmthScore = vals.reduce((sum, v) => sum + (WARMTH[v] ?? 0), 0)
 
-  return Object.entries(totals).reduce(
-    (best, [season, pts]) => pts > best.pts ? { season, pts } : best,
-    { season: 'Summer', pts: -1 }
-  ).season
+  let isWarm
+  if (warmthScore !== 0) {
+    isWarm = warmthScore > 0
+  } else {
+    // Tie — use jewelry (q1) then eye color (q5) as tiebreakers
+    const jewelry  = answers.q1
+    const eyes     = answers.q5
+    const jewelryW = WARMTH[jewelry] ?? 0
+    const eyesW    = WARMTH[eyes]    ?? 0
+    const tiebreak = jewelryW !== 0 ? jewelryW : eyesW
+    isWarm = tiebreak >= 0  // default to warm if all tiebreakers are neutral
+  }
+
+  // ── Axis 2: depth ─────────────────────────────────────────────
+  const depthVals = vals.filter(v => DEPTH[v] !== undefined)
+  const depthScore = depthVals.length
+    ? depthVals.reduce((sum, v) => sum + DEPTH[v], 0) / depthVals.length
+    : 1  // default to medium
+  const isDeep = depthScore >= 1.2  // above medium tips into deep
+
+  // ── Axis 3: contrast ──────────────────────────────────────────
+  const contrastVals = vals.filter(v => CONTRAST[v] !== undefined)
+  const contrastScore = contrastVals.length
+    ? contrastVals.reduce((sum, v) => sum + CONTRAST[v], 0) / contrastVals.length
+    : 1
+  const isHighContrast = contrastScore >= 1.4
+
+  // ── Season resolution ─────────────────────────────────────────
+  if (isWarm && !isDeep)                       return 'Spring'
+  if (!isWarm && !isDeep)                      return 'Summer'
+  if (isWarm && isDeep)                        return 'Autumn'
+  if (!isWarm && isDeep && isHighContrast)     return 'Winter'
+  if (!isWarm && isDeep)                       return 'Winter'  // deep cool always resolves to Winter
+  return 'Summer'  // unreachable fallback
 }
 
 // ── Result content ────────────────────────────────────────────────
 
 const RESULTS = {
   Spring: {
-    label: 'Spring',
-    description: "Your coloring is warm, light, and clear — the freshest of the warm seasons. You have a natural brightness that comes alive in clear, warm tones. Heavy or muted shades tend to dull your complexion, while clear warm colors make your skin look luminous.",
-    palette: ['#FFBB8A', '#FF8C69', '#F5A0B5', '#FFE07A', '#7ECAC3', '#A8CB7A', '#D4956A', '#FFF0D4'],
-    wear: [
-      'Warm, clear tones — coral, peach, and warm salmon',
-      'Golden yellows and warm ivories close to the face',
-      'Clear aquas and warm teals',
-      'Light warm greens — grass and lime',
+    heading:    'Your palette leans warm and clear',
+    seasonLabel: 'Spring palette',
+    palette: ['#E8735A', '#F4A07A', '#F5C88A', '#F9E4A0', '#6DC4B0', '#8DC87A', '#C8956A'],
+    workWell: [
+      'Clear warm tones like coral, peach, and warm salmon may make your features look more open and alive.',
+      'Golden yellows, warm ivories, and light camel worn close to the face may add a natural warmth and glow.',
+      'Clear aquas and warm teals may work surprisingly well — the warmth in these shades tends to complement rather than compete.',
     ],
-    avoid: [
-      'Black and very dark colours close to the face — they can look harsh',
-      'Cool greys, icy pastels, and blue-based pinks',
-      'Heavy, earthy, or very muted shades',
+    lessHarmonious: [
+      'Very dark shades like black or dark charcoal near the face may feel heavy or harsh against your colouring.',
+      'Cool-based pinks, icy pastels, and heavy muted tones may mute your natural brightness rather than enhance it.',
     ],
     teaser: 'True Spring or Light Spring?',
   },
   Summer: {
-    label: 'Summer',
-    description: "Your coloring is cool, light, and soft — the most delicate of the cool seasons. You suit muted, dusty versions of cool tones rather than anything sharp or saturated. High contrast or very bold colors tend to overwhelm your natural softness.",
-    palette: ['#D4879A', '#B8A9D0', '#8CB8D4', '#A3B89A', '#C49AAB', '#B0B8C4', '#7AABB0', '#E8C4C8'],
-    wear: [
-      'Soft, dusty cool tones — muted rose, lavender, powder blue',
-      'Cool greys and blue-greys',
-      'Soft sage, muted teal, and dusty aqua',
-      'Blush and soft mauves',
+    heading:    'Your palette leans soft and cool',
+    seasonLabel: 'Summer palette',
+    palette: ['#C4788A', '#A890C4', '#7AAEC8', '#B4C4A8', '#9490B4', '#A0AEC0', '#C8A0B0'],
+    workWell: [
+      'Dusty and softened cool tones — muted rose, lavender, powder blue, and soft mauve — may sit most harmoniously near your face.',
+      'Charcoal, cool taupe, and blue-grey may work better than black as neutrals, keeping the look soft rather than stark.',
+      'Dusty sage, muted teal, and softened berry tones may bring out the cool clarity in your features without overwhelming them.',
     ],
-    avoid: [
-      'Black and very sharp contrasts close to the face',
-      'Warm oranges, rusts, and olive greens',
-      'Bright, saturated colours — they overpower your softness',
+    lessHarmonious: [
+      'Very warm oranges, rusts, and olive greens may feel less harmonious near your face — they can pull colour away from your features.',
+      'Bright, highly saturated shades or strong black-and-white contrast may overpower the natural softness of your colouring.',
     ],
     teaser: 'Light Summer or Soft Summer?',
   },
   Autumn: {
-    label: 'Autumn',
-    description: "Your coloring is warm, rich, and muted — the deepest of the warm seasons. You suit earthy, complex tones that have warmth and depth without brightness. Clear or cool colors tend to look jarring against your natural richness.",
-    palette: ['#C06040', '#D4733A', '#8B7D3A', '#C47850', '#5A7840', '#9B6040', '#D4A830', '#3A7070'],
-    wear: [
-      'Warm earthy tones — rust, terracotta, burnt orange, and camel',
-      'Olive, forest green, and warm khaki',
-      'Rich browns, warm gold, and mustard',
-      'Deep warm teal and muted brick red',
+    heading:    'Your palette leans warm and muted',
+    seasonLabel: 'Autumn palette',
+    palette: ['#B85C38', '#C8703A', '#8A8030', '#B87848', '#5A7840', '#986038', '#C8A030'],
+    workWell: [
+      'Earthy warm tones like terracotta, burnt orange, rust, and camel may look richly harmonious against your colouring.',
+      'Olive, forest green, and warm khaki may ground your look in a way that cool greens rarely achieve for you.',
+      'Warm mustard, deep warm brown, and muted brick red may add depth without looking harsh or overly saturated.',
     ],
-    avoid: [
-      'Black (very dark navy or dark brown works better)',
-      'Icy pastels and cool pinks or lavenders',
-      'Bright, clear, or neon shades',
+    lessHarmonious: [
+      'Icy pastels and cool-based pinks or lavenders may feel flat or slightly off near your face — the cool undertone can clash with your warmth.',
+      'Bright, clear, or neon shades may feel less harmonious than their muted counterparts — warmth and softness tend to suit you more than clarity.',
     ],
     teaser: 'Soft Autumn or Deep Autumn?',
   },
   Winter: {
-    label: 'Winter',
-    description: "Your coloring is cool, deep, and high contrast — the most striking of the cool seasons. You suit bold, clear, and saturated cool tones. Muted or warm colors can make you look washed out or muddy, while high contrast and cool clarity is your natural home.",
-    palette: ['#CC2040', '#1840A8', '#0A8040', '#1A1A1A', '#FFFFFF', '#CC1880', '#F0C0D0', '#0A1870'],
-    wear: [
-      'Bold, clear cool tones — true red, royal blue, emerald',
-      'Black and pure white — especially together',
-      'Icy pastels — icy pink, icy blue, icy violet',
-      'Deep jewel tones — sapphire, ruby, deep purple',
+    heading:    'Your palette leans cool and bold',
+    seasonLabel: 'Winter palette',
+    palette: ['#C02040', '#1840A8', '#0A8040', '#101010', '#F8F8F8', '#9810A0', '#E01880'],
+    workWell: [
+      'Bold, clear cool tones — true red, cobalt blue, and emerald — may look striking and intentional rather than overwhelming.',
+      'Strong neutrals like black and pure white may sit very naturally against your colouring, especially worn near the face.',
+      'Deep jewel tones and cool-based brights like deep plum and hot pink may give your look a clarity that softer shades don\'t quite achieve.',
     ],
-    avoid: [
-      'Warm oranges, peach, and golden tones',
-      'Muted or earthy colours — they dull your natural contrast',
-      'Mid-tone browns and beiges next to the face',
+    lessHarmonious: [
+      'Warm oranges, peachy tones, and golden yellows near the face may feel less harmonious — they can muddy rather than enhance your contrast.',
+      'Heavily muted or earthy shades may soften your natural contrast in a way that feels dull rather than polished.',
     ],
     teaser: 'True Winter or Deep Winter?',
   },
@@ -303,6 +346,35 @@ function UpgradeTeaser({ subtype }) {
   )
 }
 
+// ── Shared result content ─────────────────────────────────────────
+
+function ResultContent({ result }) {
+  return (
+    <>
+      <PaletteStrip colors={result.palette} />
+
+      <div className={styles.guidance}>
+        <div className={styles.guidanceBlock}>
+          <p className={styles.guidanceHeading}>May work well</p>
+          <ul className={styles.guidanceList}>
+            {result.workWell.map((item, i) => (
+              <li key={i}>{item}</li>
+            ))}
+          </ul>
+        </div>
+        <div className={styles.guidanceBlock}>
+          <p className={styles.guidanceHeading}>May feel less harmonious</p>
+          <ul className={styles.guidanceList}>
+            {result.lessHarmonious.map((item, i) => (
+              <li key={i}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </>
+  )
+}
+
 // ── Result screen ─────────────────────────────────────────────────
 
 function ResultScreen({ season, onSave, onRetake, saving, saved }) {
@@ -313,31 +385,12 @@ function ResultScreen({ season, onSave, onRetake, saving, saved }) {
       <div className={styles.resultContainer}>
 
         <div className={styles.resultHeader}>
-          <p className={styles.resultEyebrow}>Your color season</p>
-          <h1 className={styles.resultLabel}>{result.label}</h1>
-          <p className={styles.resultDescription}>{result.description}</p>
+          <p className={styles.resultEyebrow}>Your color analysis</p>
+          <h1 className={styles.resultLabel}>{result.heading}</h1>
+          <p className={styles.resultSeasonLabel}>{result.seasonLabel}</p>
         </div>
 
-        <PaletteStrip colors={result.palette} />
-
-        <div className={styles.guidance}>
-          <div className={styles.guidanceBlock}>
-            <p className={styles.guidanceHeading}>What to wear</p>
-            <ul className={styles.guidanceList}>
-              {result.wear.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
-          </div>
-          <div className={styles.guidanceBlock}>
-            <p className={styles.guidanceHeading}>What to avoid</p>
-            <ul className={styles.guidanceList}>
-              {result.avoid.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
+        <ResultContent result={result} />
 
         <div className={styles.resultActions}>
           {saved ? (
@@ -372,31 +425,12 @@ function PreviousResultScreen({ season, onRetake }) {
       <div className={styles.resultContainer}>
 
         <div className={styles.resultHeader}>
-          <p className={styles.resultEyebrow}>Your saved color season</p>
-          <h1 className={styles.resultLabel}>{result.label}</h1>
-          <p className={styles.resultDescription}>{result.description}</p>
+          <p className={styles.resultEyebrow}>Your saved color analysis</p>
+          <h1 className={styles.resultLabel}>{result.heading}</h1>
+          <p className={styles.resultSeasonLabel}>{result.seasonLabel}</p>
         </div>
 
-        <PaletteStrip colors={result.palette} />
-
-        <div className={styles.guidance}>
-          <div className={styles.guidanceBlock}>
-            <p className={styles.guidanceHeading}>What to wear</p>
-            <ul className={styles.guidanceList}>
-              {result.wear.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
-          </div>
-          <div className={styles.guidanceBlock}>
-            <p className={styles.guidanceHeading}>What to avoid</p>
-            <ul className={styles.guidanceList}>
-              {result.avoid.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
+        <ResultContent result={result} />
 
         <div className={styles.resultActions}>
           <Button variant="ghost" fullWidth onClick={onRetake}>

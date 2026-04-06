@@ -100,6 +100,15 @@
   line-height: var(--line-height-body);
 }
 
+.resultSeasonLabel {
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin-top: var(--space-xs);
+}
+
 /* ── Palette strip ───────────────────────────── */
 
 .paletteStrip {
