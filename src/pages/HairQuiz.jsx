@@ -205,23 +205,111 @@ function calculateResult(answers) {
 
 // ── Result content ────────────────────────────────────────────────
 
+const COLOR_LABEL = {
+  col_black:       'Black',
+  col_dark_brown:  'Dark brown',
+  col_med_brown:   'Medium brown',
+  col_light_brown: 'Light brown',
+  col_blonde:      'Blonde',
+  col_red:         'Red',
+  col_auburn:      'Auburn',
+  col_grey:        'Grey',
+  col_white:       'White',
+  col_treated:     'Colour treated',
+}
+
+// Individual dimension descriptions (used in the attribute breakdown)
+
 const TEXTURE_INFO = {
-  Straight: 'Your hair grows without any natural curl pattern. It tends to be shinier (natural oils travel easily down the shaft) but can feel limp or oily faster. Volume and lightweight products work well.',
-  Wavy:     'Your hair has a natural S-wave pattern — not fully straight but not ringlets either. It tends to frizz in humidity and responds well to enhancing the wave rather than fighting it.',
-  Curly:    'Your hair forms defined ringlets or spirals. Moisture is key — curly hair tends to be drier because oils struggle to travel down the curl. Define-and-seal methods work best.',
-  Coily:    'Your hair has a tight coil or zigzag pattern and shrinks significantly when dry. It needs consistent moisture, gentle handling, and protective styles to retain length.',
+  Straight: 'No natural curl pattern — natural oils travel easily down the shaft, which keeps it shinier but can mean it goes flat or oily faster than curly types.',
+  Wavy:     'A natural S-wave that falls somewhere between straight and curly. It frizzes in humidity and responds best to enhancing the pattern rather than fighting it.',
+  Curly:    'Defined ringlets or spirals that are naturally drier because oils struggle to travel down the curl. Moisture and sealing are the foundation of everything.',
+  Coily:    'Tight coils or zigzags that shrink significantly when dry. Needs consistent moisture, gentle handling, and regular protective styling to retain length.',
 }
 
 const DENSITY_INFO = {
-  Fine:   'You have fewer individual hair strands overall. Fine hair can look flat easily and benefits from volumising products, lighter formulas, and avoiding heavy conditioning near the roots.',
-  Medium: 'Your hair density is in the middle ground — versatile and the easiest density to work with. Most products and styles will suit you without much adjustment.',
-  Thick:  'You have a high number of hair strands, giving you a full, substantial head of hair. Heavier products won\'t weigh your hair down, and you can carry off voluminous styles easily.',
+  Fine:   'Fewer individual strands overall — fine hair goes flat quickly and needs lightweight formulas, volumising products, and conditioning kept away from the roots.',
+  Medium: 'Right in the middle — versatile and the easiest density to work with. Most products and cuts will suit you without much adjustment.',
+  Thick:  'A high number of strands giving you a full, substantial head of hair. Heavier products won\'t weigh you down, and you can carry voluminous styles easily.',
 }
 
 const POROSITY_INFO = {
-  Low:    'Your hair cuticle lies flat and resists absorbing moisture — which means it also resists losing it. Use heat when conditioning to help products penetrate, and opt for lighter, water-based formulas.',
-  Medium: 'Your hair cuticle is balanced — it absorbs and retains moisture well. Most products work for you, and your hair tends to be healthy and manageable with regular care.',
-  High:   'Your hair cuticle is more open, absorbing moisture quickly but losing it just as fast. Seal moisture in with heavier creams or oils after washing, and use protein treatments to strengthen the cuticle.',
+  Low:    'Your cuticle lies flat and resists absorbing moisture — which also means it holds onto moisture well once it\'s in. Products absorb slowly, so heat or steam helps.',
+  Medium: 'A balanced cuticle that absorbs and retains moisture with minimal effort. Most products and routines work well — you don\'t need to fight your hair.',
+  High:   'An open cuticle that soaks up moisture fast but loses it just as quickly. Sealing after washing with a cream or oil keeps hydration locked in.',
+}
+
+// Profile summary — one conversational sentence per combination
+
+const TEXTURE_DENSITY_PHRASE = {
+  Straight: { Fine: 'fine, straight hair', Medium: 'straight hair', Thick: 'thick, straight hair' },
+  Wavy:     { Fine: 'fine, wavy hair',     Medium: 'wavy hair',     Thick: 'full, wavy hair'     },
+  Curly:    { Fine: 'fine curly hair',     Medium: 'curly hair',    Thick: 'thick curly hair'    },
+  Coily:    { Fine: 'fine coily hair',     Medium: 'coily hair',    Thick: 'dense coily hair'    },
+}
+
+const POROSITY_CONTEXT = {
+  Low:    'a tight cuticle that holds moisture in but takes time to absorb it',
+  Medium: 'a balanced cuticle that absorbs and retains moisture easily',
+  High:   'an open cuticle that soaks up moisture quickly but needs help holding onto it',
+}
+
+function getProfileSummary(texture, density, porosity) {
+  const phrase = TEXTURE_DENSITY_PHRASE[texture]?.[density] ?? 'a unique hair type'
+  const context = POROSITY_CONTEXT[porosity] ?? ''
+  return `You have ${phrase} with ${context}.`
+}
+
+// What this means — 3 bullets per combination, split by topic
+
+const STYLING_BULLET = {
+  Straight_Fine:   'Keep products lightweight and apply from mid-lengths down — anything heavy near the roots will flatten and grease your hair within hours.',
+  Straight_Medium: 'Your hair sits where you put it and holds a blowout well — a round brush and light setting spray are all you need to add lasting movement.',
+  Straight_Thick:  'A smoothing serum before blow-drying tames bulk and keeps the finish sleek — work in sections so heat reaches all the way through.',
+  Wavy_Fine:       'Scrunch in a light mousse on soaking wet hair, then don\'t touch it until it\'s completely dry — disturbing the wave mid-dry is what causes frizz.',
+  Wavy_Medium:     'A curl cream or light gel scrunched into wet hair enhances your wave — diffuse on low heat or air dry, and scrunch out the crunch once dry.',
+  Wavy_Thick:      'Your wave is strong but needs weight removed to move freely — layer a leave-in and a medium-hold gel, then diffuse to encourage the pattern.',
+  Curly_Fine:      'Layer products lightly — a leave-in plus a lightweight gel gives hold without the weight that collapses fine curls.',
+  Curly_Medium:    'Use the LOC method (liquid, oil, cream) applied to soaking wet hair — let it dry completely undisturbed for the best definition.',
+  Curly_Thick:     'Apply rich creams generously section by section on dripping wet hair — your curls need deep moisture to look defined and feel manageable.',
+  Coily_Fine:      'Detangle only on wet, conditioned hair using your fingers or a wide-tooth comb — dry detangling will cause breakage on fine coily strands.',
+  Coily_Medium:    'Work in small sections when styling so every curl gets even product coverage — coils this tight will absorb moisture unevenly if you rush.',
+  Coily_Thick:     'Your hair needs time and consistency — deep condition weekly, seal with a butter or oil, and use protective styles whenever you want to retain length.',
+}
+
+const PRODUCT_BULLET = {
+  Low_Fine:    'Use water-based, lightweight formulas only — heavy oils and creams sit on top and weigh down already-fine strands. Apply with a little steam or warmth to help absorption.',
+  Low_Medium:  'Stick to water-based moisturisers and light oils like argan or grapeseed — use a warm towel or steamer when deep conditioning to help products penetrate the cuticle.',
+  Low_Thick:   'Your hair can handle slightly richer formulas, but still apply with heat — a monthly warm-oil treatment or steam session keeps the cuticle soft and receptive.',
+  Medium_Fine: 'Most standard moisturising products work for you — keep them lightweight and avoid conditioning close to the roots, which will flatten fine hair quickly.',
+  Medium_Medium:'You\'re easy to shop for — most mainstream moisturising products work well. Focus your choices on what your texture needs rather than worrying about porosity.',
+  Medium_Thick: 'Medium to heavier formulas suit you without weighing hair down — look for products that deliver both moisture and control in one step.',
+  High_Fine:   'Protein treatments every 2–3 weeks help reinforce fragile high-porosity strands — always follow with a light oil to seal, and keep an eye out for products with keratin or hydrolysed proteins.',
+  High_Medium: 'Alternate protein and moisture treatments to keep your cuticle strong — seal with a medium oil like jojoba or sweet almond after every wash to lock hydration in.',
+  High_Thick:  'Lean into rich creams and heavy butters — your hair will absorb them fully and hold onto moisture far better with a proper sealing step after every wash.',
+}
+
+const CUT_BULLET = {
+  Straight_Fine:   'Blunt cuts and bobs create the illusion of thickness on fine straight hair — go easy on layers, as too many will make ends look wispy and sparse.',
+  Straight_Medium: 'Most cuts suit you well — ask for face-framing layers if you want movement, or keep it blunt for a clean, modern silhouette.',
+  Straight_Thick:  'Long layers and internal thinning take weight out without sacrificing shape — blunt cuts at long lengths can look heavy and become difficult to manage.',
+  Wavy_Fine:       'Long layers suit your hair well and help the wave fall without removing too much bulk — avoid over-thinning, which disrupts the S-pattern.',
+  Wavy_Medium:     'Ask your stylist to cut your hair dry so they can see your natural wave — a long layered cut is almost always the right starting point.',
+  Wavy_Thick:      'Layers are essential for removing bulk and letting your wave move freely — without them, the weight will pull the pattern flat by mid-afternoon.',
+  Curly_Fine:      'A tapered layered shape supports your curl without making fine strands look sparse — avoid blunt cuts at the ends, which can look too heavy.',
+  Curly_Medium:    'A curl specialist or DevaCut makes a real difference — dry cutting lets the stylist work with your natural pattern and shrinkage, not against it.',
+  Curly_Thick:     'A wide, layered shape suits your curls beautifully — look for a natural hair specialist who will sculpt for your curl size and shrinkage level.',
+  Coily_Fine:      'Preserve fullness and avoid heavy thinning — fine coily strands already deal with significant shrinkage, so keeping bulk at the ends helps.',
+  Coily_Medium:    'Talk through your shrinkage with your stylist upfront so the final length lands where you want it — a tapered natural or defined shape both work well.',
+  Coily_Thick:     'You have the density for almost any natural style — a shape-up or sculptural cut from a natural hair specialist will make the most of your hair\'s range.',
+}
+
+function getProfileBullets(texture, density, porosity) {
+  return [
+    STYLING_BULLET[`${texture}_${density}`] ?? '',
+    PRODUCT_BULLET[`${porosity}_${density}`] ?? '',
+    CUT_BULLET[`${texture}_${density}`] ?? '',
+  ]
 }
 
 // ── Intro screen ─────────────────────────────────────────────────
@@ -251,45 +339,72 @@ function IntroScreen({ onStart }) {
   )
 }
 
+// ── Shared result content ─────────────────────────────────────────
+
+function ProfileContent({ result, eyebrow }) {
+  const { texture, density, porosity, currentColor } = result
+  const colorLabel = currentColor ? COLOR_LABEL[currentColor] : null
+  const summary    = getProfileSummary(texture, density, porosity)
+  const bullets    = getProfileBullets(texture, density, porosity)
+
+  return (
+    <>
+      <div className={styles.resultHeader}>
+        <p className={styles.resultEyebrow}>{eyebrow}</p>
+        <h1 className={styles.resultCombo}>
+          {texture}
+          <span className={styles.dot} aria-hidden="true">·</span>
+          {density} density
+          <span className={styles.dot} aria-hidden="true">·</span>
+          {porosity} porosity
+          {colorLabel && (
+            <>
+              <span className={styles.dot} aria-hidden="true">·</span>
+              {colorLabel}
+            </>
+          )}
+        </h1>
+        <p className={styles.resultSummary}>{summary}</p>
+      </div>
+
+      <div className={styles.attributes}>
+        <div className={styles.attribute}>
+          <p className={styles.attrLabel}>Texture</p>
+          <p className={styles.attrValue}>{texture}</p>
+          <p className={styles.attrDesc}>{TEXTURE_INFO[texture]}</p>
+        </div>
+        <div className={styles.divider} />
+        <div className={styles.attribute}>
+          <p className={styles.attrLabel}>Density</p>
+          <p className={styles.attrValue}>{density}</p>
+          <p className={styles.attrDesc}>{DENSITY_INFO[density]}</p>
+        </div>
+        <div className={styles.divider} />
+        <div className={styles.attribute}>
+          <p className={styles.attrLabel}>Porosity</p>
+          <p className={styles.attrValue}>{porosity}</p>
+          <p className={styles.attrDesc}>{POROSITY_INFO[porosity]}</p>
+        </div>
+      </div>
+
+      <div className={styles.whatThisMeans}>
+        <p className={styles.sectionHeading}>What this means</p>
+        <ul className={styles.meansList}>
+          {bullets.map((b, i) => <li key={i}>{b}</li>)}
+        </ul>
+      </div>
+    </>
+  )
+}
+
 // ── Result screen ─────────────────────────────────────────────────
 
 function ResultScreen({ result, onSave, onRetake, saving, saved }) {
-  const { texture, density, porosity } = result
-
   return (
     <div className={styles.resultPage}>
       <div className={styles.resultContainer}>
 
-        <div className={styles.resultHeader}>
-          <p className={styles.resultEyebrow}>Your hair profile</p>
-          <h1 className={styles.resultCombo}>
-            {texture}
-            <span className={styles.dot} aria-hidden="true">·</span>
-            {density}
-            <span className={styles.dot} aria-hidden="true">·</span>
-            {porosity} porosity
-          </h1>
-        </div>
-
-        <div className={styles.attributes}>
-          <div className={styles.attribute}>
-            <p className={styles.attrLabel}>Texture</p>
-            <p className={styles.attrValue}>{texture}</p>
-            <p className={styles.attrDesc}>{TEXTURE_INFO[texture]}</p>
-          </div>
-          <div className={styles.divider} />
-          <div className={styles.attribute}>
-            <p className={styles.attrLabel}>Density</p>
-            <p className={styles.attrValue}>{density}</p>
-            <p className={styles.attrDesc}>{DENSITY_INFO[density]}</p>
-          </div>
-          <div className={styles.divider} />
-          <div className={styles.attribute}>
-            <p className={styles.attrLabel}>Porosity</p>
-            <p className={styles.attrValue}>{porosity}</p>
-            <p className={styles.attrDesc}>{POROSITY_INFO[porosity]}</p>
-          </div>
-        </div>
+        <ProfileContent result={result} eyebrow="Your hair profile" />
 
         <div className={styles.resultActions}>
           {saved ? (
@@ -315,42 +430,11 @@ function ResultScreen({ result, onSave, onRetake, saving, saved }) {
 }
 
 function PreviousResultScreen({ result, onRetake }) {
-  const { texture, density, porosity } = result
-
   return (
     <div className={styles.resultPage}>
       <div className={styles.resultContainer}>
 
-        <div className={styles.resultHeader}>
-          <p className={styles.resultEyebrow}>Your saved hair profile</p>
-          <h1 className={styles.resultCombo}>
-            {texture}
-            <span className={styles.dot} aria-hidden="true">·</span>
-            {density}
-            <span className={styles.dot} aria-hidden="true">·</span>
-            {porosity} porosity
-          </h1>
-        </div>
-
-        <div className={styles.attributes}>
-          <div className={styles.attribute}>
-            <p className={styles.attrLabel}>Texture</p>
-            <p className={styles.attrValue}>{texture}</p>
-            <p className={styles.attrDesc}>{TEXTURE_INFO[texture]}</p>
-          </div>
-          <div className={styles.divider} />
-          <div className={styles.attribute}>
-            <p className={styles.attrLabel}>Density</p>
-            <p className={styles.attrValue}>{density}</p>
-            <p className={styles.attrDesc}>{DENSITY_INFO[density]}</p>
-          </div>
-          <div className={styles.divider} />
-          <div className={styles.attribute}>
-            <p className={styles.attrLabel}>Porosity</p>
-            <p className={styles.attrValue}>{porosity}</p>
-            <p className={styles.attrDesc}>{POROSITY_INFO[porosity]}</p>
-          </div>
-        </div>
+        <ProfileContent result={result} eyebrow="Your saved hair profile" />
 
         <div className={styles.resultActions}>
           <Button variant="ghost" fullWidth onClick={onRetake}>

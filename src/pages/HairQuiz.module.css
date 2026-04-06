@@ -141,6 +141,54 @@
   line-height: var(--line-height-body);
 }
 
+/* ── Result summary ──────────────────────────── */
+
+.resultSummary {
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-body);
+  margin-top: var(--space-xs);
+}
+
+/* ── What this means ─────────────────────────── */
+
+.whatThisMeans {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.sectionHeading {
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.meansList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.meansList li {
+  font-size: var(--text-caption);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-body);
+  padding-left: var(--space-md);
+  position: relative;
+}
+
+.meansList li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--color-accent);
+}
+
 /* ── Actions ─────────────────────────────────── */
 
 .resultActions {
