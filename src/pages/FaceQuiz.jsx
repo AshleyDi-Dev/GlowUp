@@ -140,7 +140,7 @@ const RESULTS = {
     whatThisMeans: [
       'V-necks, deep scoop necks, and open collars draw the eye downward and add the illusion of length — they tend to be especially flattering.',
       'Angular earrings — long drops, rectangles, and geometric shapes — add definition. Hoops and round studs can echo the roundness, so longer vertical styles tend to work better.',
-      'Rectangular or angular glasses frames add structure and contrast well with soft features. Side-swept fringes and long layers create flattering vertical lines.',
+      'Rectangular or angular glasses frames may add structure and contrast well with soft features. Side-swept fringes and long layers tend to create a flattering vertical line.',
     ],
   },
   Square: {
@@ -150,7 +150,7 @@ const RESULTS = {
     whatThisMeans: [
       'Round and oval necklines soften the jawline — scoop, U-necks, and off-shoulder styles all work well. Very square or boxy necklines can feel heavy when the jaw is already strong.',
       'Curved earrings — hoops, teardrop shapes, and round studs — complement the angular jaw naturally. Long, delicate drops also work by drawing the eye down.',
-      'Round and oval glasses frames soften the structure of the face. Layered haircuts that fall below the jaw add softness; blunt jaw-length cuts emphasise the angle.',
+      'Round and oval glasses frames may soften the structure of the face. Layered haircuts that fall below the jaw tend to add softness; blunt jaw-length cuts tend to emphasise the angle.',
     ],
   },
   Heart: {
@@ -160,7 +160,7 @@ const RESULTS = {
     whatThisMeans: [
       'Wider or off-shoulder necklines balance the broader forehead — sweetheart, boat, and wide scoop necks draw the eye down and outward effectively.',
       'Earrings that are wider at the bottom — chandelier styles, teardrop shapes, and fan drops — add visual weight below the jaw, which balances the forehead width.',
-      'Round and oval frames with slightly wider bottoms work well for glasses. Haircuts with volume below the ear — waves, layers from the chin down — complement the heart shape naturally.',
+      'Round and oval frames with slightly wider bottoms may work well for glasses. Haircuts with volume below the ear — waves, layers from the chin down — tend to complement the heart shape naturally.',
     ],
   },
   Oblong: {
@@ -179,7 +179,7 @@ const RESULTS = {
     description: "Your cheekbones are the standout feature — wide and prominent, with a narrow forehead and a tapered jaw below. The goal is usually to add width at the forehead and chin to balance the cheekbone width.",
     whatThisMeans: [
       'Wider necklines at forehead level — boat necks and straight-across necklines — help add width where the face is narrower and balance the cheekbone width.',
-      'Earrings that are wider at the top — studs, small hoops, and curved drops — add width at the forehead and jaw level. Avoid narrow drops that point straight down.',
+      'Earrings that are wider at the top — studs, small hoops, and curved drops — may add width at the forehead and jaw level. Narrow drops that point straight down can elongate rather than balance, so they may feel less harmonious.',
       'Rimless and oval frames that sit wide at the forehead work well. Haircuts with volume at the crown and jaw — layers, side-swept styles — balance the narrow top and bottom of the face.',
     ],
   },

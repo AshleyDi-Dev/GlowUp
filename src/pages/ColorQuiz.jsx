@@ -195,21 +195,6 @@ const DEPTH = {
   deep_skin:  2,
 }
 
-// Maps each answer value to a contrast score: 0 = low, 1 = medium, 2 = high.
-const CONTRAST = {
-  // Q8 — contrast between features
-  very_little_c: 0,
-  moderate_c:    1,
-  high_c:        2,
-  // Q9 — bold colors (proxy for contrast tolerance)
-  overwhelm:    0,
-  suit_well:    2,
-  depends_bold: 1,
-  // Q10 — dark vs light near face
-  dark_better:  2,
-  light_better: 0,
-  both_depth:   1,
-}
 
 const IDK_VALUES = new Set(['q3_idk', 'q4_idk', 'q7_idk', 'q8_idk', 'q9_idk', 'q10_idk'])
 
@@ -245,20 +230,18 @@ function calculateResult(answers) {
     : 1  // default to medium
   const isDeep = depthScore >= 1.2  // above medium tips into deep
 
-  // ── Axis 3: contrast ──────────────────────────────────────────
-  const contrastVals = vals.filter(v => CONTRAST[v] !== undefined)
-  const contrastScore = contrastVals.length
-    ? contrastVals.reduce((sum, v) => sum + CONTRAST[v], 0) / contrastVals.length
-    : 1
-  const isHighContrast = contrastScore >= 1.4
+  // ── Confidence — based on strength of the warmth signal ───────
+  const confidence = Math.abs(warmthScore) >= 4 ? 'Strong match' : 'Likely match'
 
   // ── Season resolution ─────────────────────────────────────────
-  if (isWarm && !isDeep)                       return 'Spring'
-  if (!isWarm && !isDeep)                      return 'Summer'
-  if (isWarm && isDeep)                        return 'Autumn'
-  if (!isWarm && isDeep && isHighContrast)     return 'Winter'
-  if (!isWarm && isDeep)                       return 'Winter'  // deep cool always resolves to Winter
-  return 'Summer'  // unreachable fallback
+  let season
+  if (isWarm && !isDeep)                   season = 'Spring'
+  else if (!isWarm && !isDeep)             season = 'Summer'
+  else if (isWarm && isDeep)               season = 'Autumn'
+  else if (!isWarm && isDeep)              season = 'Winter'
+  else                                     season = 'Summer'  // unreachable fallback
+
+  return { season, confidence }
 }
 
 // ── Result content ────────────────────────────────────────────────

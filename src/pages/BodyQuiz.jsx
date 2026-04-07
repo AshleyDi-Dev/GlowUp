@@ -167,7 +167,7 @@ const RESULTS = {
     whatThisMeans: [
       'Adding volume or detail to your lower half — wide-leg trousers, full skirts, pleats — helps bring your proportions into balance.',
       "V-necks and raglan sleeves soften the shoulder line, while boat necks and structured blazers emphasise it.",
-      "Your legs are typically a strong feature — don't be afraid to show them off.",
+      "Your legs tend to be a strong feature — styles that show them off, like shorter hemlines or tailored trousers, can be worth exploring.",
     ],
   },
   Rectangle: {
@@ -185,7 +185,7 @@ const RESULTS = {
     description: 'You carry weight through your midsection and torso, with slimmer legs and arms. The goal is usually to elongate the middle and draw attention to your stronger points — your legs, décolletage, or shoulders. Empire waists, wrap tops, and monochromatic looks tend to be the most flattering.',
     summary:     'Your proportions are midsection-dominant — you carry more volume through the torso with slimmer arms and legs.',
     whatThisMeans: [
-      "Drawing attention to your legs, shoulders, or décolletage shifts the focus naturally — don't underestimate how well these work for you.",
+      "Drawing attention to your legs, shoulders, or décolletage may shift the focus naturally — these areas can be strong features worth highlighting.",
       'Empire waists, wrap styles, and anything that flows over the midsection rather than clinging tend to be more comfortable and flattering.',
       'Monochromatic dressing — one colour head to toe — creates an elongating effect that works especially well for your proportions.',
     ],
