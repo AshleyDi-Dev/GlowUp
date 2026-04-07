@@ -138,19 +138,39 @@ export default function QuizEngine({
         )}
 
         {/* Answer options */}
-        <div className={styles.options}>
-          {current.options.map(opt => (
-            <SelectionCard
-              key={opt.value}
-              label={opt.label}
-              selected={selected === opt.value}
-              onSelect={() => handleSelect(opt.value)}
-              icon={opt.icon ?? undefined}
-              imageSrc={opt.imageSrc ?? undefined}
-              imageAlt={opt.imageAlt ?? undefined}
-            />
-          ))}
-        </div>
+        {(() => {
+          const mainOpts   = current.options.filter(o => !o.escape)
+          const escapeOpts = current.options.filter(o =>  o.escape)
+          return (
+            <div className={styles.options}>
+              {mainOpts.map(opt => (
+                <SelectionCard
+                  key={opt.value}
+                  label={opt.label}
+                  selected={selected === opt.value}
+                  onSelect={() => handleSelect(opt.value)}
+                  icon={opt.icon ?? undefined}
+                  imageSrc={opt.imageSrc ?? undefined}
+                  imageAlt={opt.imageAlt ?? undefined}
+                />
+              ))}
+              {escapeOpts.length > 0 && (
+                <>
+                  <div className={styles.escapeDivider} aria-hidden="true">or</div>
+                  {escapeOpts.map(opt => (
+                    <SelectionCard
+                      key={opt.value}
+                      label={opt.label}
+                      selected={selected === opt.value}
+                      onSelect={() => handleSelect(opt.value)}
+                      className={styles.escapeCard}
+                    />
+                  ))}
+                </>
+              )}
+            </div>
+          )
+        })()}
 
         {/* Navigation */}
         <div className={styles.nav}>

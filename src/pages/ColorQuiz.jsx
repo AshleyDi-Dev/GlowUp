@@ -46,6 +46,7 @@ const QUESTIONS = [
       { value: 'bright_white', label: 'Bright white — it makes me look fresh and alive' },
       { value: 'cream_white',  label: 'Cream or off-white — bright white washes me out' },
       { value: 'both_whites',  label: 'Both work pretty well honestly' },
+      { value: 'q3_idk',       label: "I'm not sure", escape: true },
     ],
   },
   {
@@ -57,6 +58,7 @@ const QUESTIONS = [
       { value: 'cool_compliment', label: 'Something cool toned — blues, pinks, purples, or grey' },
       { value: 'warm_compliment', label: 'Something warm toned — oranges, browns, yellows, or olive' },
       { value: 'both_compliment', label: 'I honestly get compliments in both' },
+      { value: 'q4_idk',          label: "I'm not sure", escape: true },
     ],
   },
   {
@@ -94,6 +96,7 @@ const QUESTIONS = [
       { value: 'tan_golden', label: 'I tan gradually and golden' },
       { value: 'tan_deeply', label: 'I tan quickly and deeply — my skin gets very dark' },
       { value: 'deep_skin',  label: "I have deeper skin that rarely burns" },
+      { value: 'q7_idk',     label: "I'm not sure", escape: true },
     ],
   },
   {
@@ -105,6 +108,7 @@ const QUESTIONS = [
       { value: 'very_little_c', label: 'Very little — everything is similar in tone and depth' },
       { value: 'moderate_c',    label: "Moderate — there's some difference but nothing dramatic" },
       { value: 'high_c',        label: "High — there's a striking difference between my features" },
+      { value: 'q8_idk',        label: "I'm not sure", escape: true },
     ],
   },
   {
@@ -116,6 +120,7 @@ const QUESTIONS = [
       { value: 'overwhelm',    label: 'They overwhelm me — I look better in softer muted tones' },
       { value: 'suit_well',    label: 'They suit me perfectly — I can carry a bold color easily' },
       { value: 'depends_bold', label: "Depends on the color — some bold shades work, others don't" },
+      { value: 'q9_idk',       label: "I'm not sure", escape: true },
     ],
   },
   {
@@ -127,6 +132,7 @@ const QUESTIONS = [
       { value: 'dark_better',  label: 'Dark colors — they make me look more defined and awake' },
       { value: 'light_better', label: 'Light colors — they make me look fresh and open' },
       { value: 'both_depth',   label: 'Both work about the same for me' },
+      { value: 'q10_idk',      label: "I'm not sure", escape: true },
     ],
   },
 ]
@@ -203,6 +209,14 @@ const CONTRAST = {
   dark_better:  2,
   light_better: 0,
   both_depth:   1,
+}
+
+const IDK_VALUES = new Set(['q3_idk', 'q4_idk', 'q7_idk', 'q8_idk', 'q9_idk', 'q10_idk'])
+
+// Returns true if the user answered "I'm not sure" on 4 or more of the 6 eligible questions.
+function isLowConfidence(answers) {
+  const idkCount = Object.values(answers).filter(v => IDK_VALUES.has(v)).length
+  return idkCount >= 4
 }
 
 function calculateResult(answers) {
@@ -385,7 +399,7 @@ function ResultContent({ result }) {
 
 // ── Result screen ─────────────────────────────────────────────────
 
-function ResultScreen({ season, onSave, onRetake, saving, saved }) {
+function ResultScreen({ season, onSave, onRetake, saving, saved, lowConfidence }) {
   const result = RESULTS[season] ?? RESULTS.Summer
 
   return (
@@ -399,6 +413,12 @@ function ResultScreen({ season, onSave, onRetake, saving, saved }) {
         </div>
 
         <ResultContent result={result} />
+
+        {lowConfidence && (
+          <p className={styles.lowConfidenceNote}>
+            Your result is our best read based on your answers — color analysis can be tricky to self-assess. You can always retake this as you learn more about your coloring.
+          </p>
+        )}
 
         <div className={styles.resultActions}>
           {saved ? (
@@ -562,6 +582,7 @@ export default function ColorQuiz() {
         onRetake={handleRetakeFromResult}
         saving={saving}
         saved={saved}
+        lowConfidence={newAnswers ? isLowConfidence(newAnswers) : false}
       />
     )
   }

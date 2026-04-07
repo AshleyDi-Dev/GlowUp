@@ -167,6 +167,18 @@
   font-size: var(--text-caption);
 }
 
+/* ── Low confidence note ─────────────────────── */
+
+.lowConfidenceNote {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+  padding: var(--space-md);
+  background: var(--color-accent-muted);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
 /* ── Actions ─────────────────────────────────── */
 
 .resultActions {
