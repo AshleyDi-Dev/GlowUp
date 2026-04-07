@@ -1,0 +1,146 @@
+/* ── Page shell ──────────────────────────────── */
+
+.page {
+  min-height: 100svh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--space-xl) var(--space-md) var(--space-2xl);
+  background: var(--color-bg);
+}
+
+.container {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+/* ── Header ──────────────────────────────────── */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.heading {
+  font-size: var(--text-heading);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+}
+
+.subheading {
+  font-size: var(--text-body);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+}
+
+/* ── Completion banner ───────────────────────── */
+
+.completionBanner {
+  display: block;
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  line-height: var(--line-height-body);
+  transition: color 150ms ease, border-color 150ms ease;
+}
+
+.completionBanner:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-text-secondary);
+}
+
+/* ── Module grid ─────────────────────────────── */
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+
+@media (max-width: 420px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Card link wrapper ───────────────────────── */
+
+.cardLink {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ── Card internals ──────────────────────────── */
+
+.card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.cardLink:hover .card {
+  border-color: var(--color-text-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.checkmark {
+  color: var(--color-success);
+  flex-shrink: 0;
+}
+
+.cardDesc {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+}
+
+/* ── Card status area ────────────────────────── */
+
+.cardStatus {
+  margin-top: auto;
+  padding-top: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.resultText {
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.updatedDate {
+  font-size: var(--text-label);
+  color: var(--color-text-secondary);
+}
+
+.retakeHint {
+  font-size: var(--text-label);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-xs);
+}
+
+.notStarted {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+}
