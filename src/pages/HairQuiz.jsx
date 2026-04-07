@@ -294,6 +294,14 @@ const QUESTIONS = [
       { value: 'hld_good',   label: 'Yes — styles stay put all day without much effort' },
     ],
   },
+  {
+    id: 'q13',
+    title: 'What does your hair look like right now?',
+    tip: 'This helps us give you more relevant recommendations. You can update this anytime.',
+    guide: null,
+    optional: true,
+    options: HAIR_STYLES.map(s => ({ value: s.value, label: s.label })),
+  },
 ]
 
 // ── Scoring ──────────────────────────────────────────────────────
@@ -338,6 +346,7 @@ function calculateResult(answers) {
     naturalColor:    answers.q10 ?? null,
     stylingTendency: answers.q11 ?? null,
     styleHold:       answers.q12 ?? null,
+    hairStyle:       answers.q13 ?? null,
   }
 }
 
@@ -448,63 +457,6 @@ function getProfileBullets(texture, density, porosity) {
     PRODUCT_BULLET[`${porosity}_${density}`] ?? '',
     CUT_BULLET[`${texture}_${density}`] ?? '',
   ]
-}
-
-// ── Style select screen ───────────────────────────────────────────
-
-function StyleSelectScreen({ onSelect, onBack }) {
-  const [selected, setSelected] = useState(null)
-
-  return (
-    <div className={styles.styleSelectPage}>
-      <div className={styles.styleSelectContainer}>
-
-        <div className={styles.styleSelectHeader}>
-          <button
-            type="button"
-            className={styles.styleSelectBack}
-            onClick={onBack}
-            aria-label="Go back"
-          >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-              <polyline points="13,4 7,10 13,16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-          <div>
-            <h2 className={styles.styleSelectHeading}>What does your hair look like right now?</h2>
-            <p className={styles.styleSelectBody}>This helps us understand your starting point. You can update this anytime.</p>
-          </div>
-        </div>
-
-        <div className={styles.styleGrid}>
-          {HAIR_STYLES.map(({ value, label, illustration: Illustration }) => (
-            <button
-              key={value}
-              type="button"
-              className={[styles.styleCard, selected === value ? styles.styleCardSelected : ''].filter(Boolean).join(' ')}
-              onClick={() => setSelected(value)}
-              aria-pressed={selected === value}
-            >
-              <div className={styles.styleIllustration}>
-                <Illustration />
-              </div>
-              <span className={styles.styleLabel}>{label}</span>
-            </button>
-          ))}
-        </div>
-
-        <div className={styles.styleSelectNav}>
-          <Button fullWidth disabled={!selected} onClick={() => selected && onSelect(selected)}>
-            Continue
-          </Button>
-          <button type="button" className={styles.textLink} onClick={() => onSelect(null)}>
-            Skip this step
-          </button>
-        </div>
-
-      </div>
-    </div>
-  )
 }
 
 // ── Upgrade teaser ────────────────────────────────────────────────
@@ -688,7 +640,6 @@ function ResultActions({ onSave, onRetake, onReset, saving, saved, resetting }) 
 
       <div className={styles.retakeBlock}>
         <Button variant="ghost" fullWidth onClick={onRetake}>Retake quiz</Button>
-        <p className={styles.actionNote}>Adds a new result to your history</p>
       </div>
 
       {confirmReset ? (
@@ -708,7 +659,6 @@ function ResultActions({ onSave, onRetake, onReset, saving, saved, resetting }) 
           <button type="button" className={styles.textLink} onClick={() => setConfirmReset(true)}>
             Reset this section
           </button>
-          <p className={styles.actionNote}>Clears your current result, keeps your history</p>
         </div>
       )}
 
@@ -826,7 +776,6 @@ export default function HairQuiz() {
 
   const [loading, setLoading]         = useState(true)
   const [quizStarted, setQuizStarted] = useState(false)
-  const [styleStep, setStyleStep]     = useState(false)
   const [savedResult, setSavedResult] = useState(null)
   const [newResult, setNewResult]     = useState(null)
   const [newAnswers, setNewAnswers]   = useState(null)
@@ -862,18 +811,7 @@ export default function HairQuiz() {
 
   function handleComplete(answers) {
     setNewAnswers(answers)
-    setStyleStep(true)
-  }
-
-  function handleStyleSelect(styleValue) {
-    setStyleStep(false)
-    setNewResult({ ...calculateResult(newAnswers), hairStyle: styleValue })
-  }
-
-  function handleStyleBack() {
-    setStyleStep(false)
-    setNewAnswers(null)
-    // quizStarted stays true so QuizEngine re-mounts at the last question
+    setNewResult(calculateResult(answers))
   }
 
   async function handleSave() {
@@ -994,16 +932,6 @@ export default function HairQuiz() {
         saving={saving}
         saved={saved}
         resetting={resetting}
-      />
-    )
-  }
-
-  // Quiz answers collected — show style selection before result
-  if (styleStep) {
-    return (
-      <StyleSelectScreen
-        onSelect={handleStyleSelect}
-        onBack={handleStyleBack}
       />
     )
   }

@@ -78,7 +78,6 @@ function ModuleCard({ mod, result, onReset, resetting }) {
               <Link to={mod.quizPath} className={styles.fullWidth}>
                 <Button variant="ghost" fullWidth>Retake quiz</Button>
               </Link>
-              <p className={styles.actionNote}>Adds a new result to your history</p>
             </div>
 
             {confirmReset ? (
@@ -111,7 +110,6 @@ function ModuleCard({ mod, result, onReset, resetting }) {
                 >
                   Reset this section
                 </button>
-                <p className={styles.actionNote}>Clears your current result, keeps your history</p>
               </div>
             )}
           </>

@@ -215,7 +215,6 @@ function ResultActions({ onSave, onRetake, onReset, saving, saved, resetting, co
 
       <div className={styles.retakeBlock}>
         <Button variant="ghost" fullWidth onClick={onRetake}>Retake quiz</Button>
-        <p className={styles.actionNote}>Adds a new result to your history</p>
       </div>
 
       {confirmReset ? (
@@ -235,7 +234,6 @@ function ResultActions({ onSave, onRetake, onReset, saving, saved, resetting, co
           <button type="button" className={styles.textLink} onClick={() => setConfirmReset(true)}>
             Reset this section
           </button>
-          <p className={styles.actionNote}>Clears your current result, keeps your history</p>
         </div>
       )}
 
@@ -257,7 +255,6 @@ function PreviousResultActions({ onRetake, onReset, resetting, continueLink, con
 
       <div className={styles.retakeBlock}>
         <Button variant="ghost" fullWidth onClick={onRetake}>Retake quiz</Button>
-        <p className={styles.actionNote}>Adds a new result to your history</p>
       </div>
 
       {confirmReset ? (
@@ -277,7 +274,6 @@ function PreviousResultActions({ onRetake, onReset, resetting, continueLink, con
           <button type="button" className={styles.textLink} onClick={() => setConfirmReset(true)}>
             Reset this section
           </button>
-          <p className={styles.actionNote}>Clears your current result, keeps your history</p>
         </div>
       )}
 

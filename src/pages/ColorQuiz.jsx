@@ -403,7 +403,6 @@ function ColorResultActions({ onSave, onRetake, onReset, saving, saved, resettin
 
       <div className={styles.retakeBlock}>
         <Button variant="ghost" fullWidth onClick={onRetake}>Retake quiz</Button>
-        <p className={styles.actionNote}>Adds a new result to your history</p>
       </div>
 
       {confirmReset ? (
@@ -423,7 +422,6 @@ function ColorResultActions({ onSave, onRetake, onReset, saving, saved, resettin
           <button type="button" className={styles.textLink} onClick={() => setConfirmReset(true)}>
             Reset this section
           </button>
-          <p className={styles.actionNote}>Clears your current result, keeps your history</p>
         </div>
       )}
 
@@ -445,7 +443,6 @@ function ColorPreviousResultActions({ onRetake, onReset, resetting }) {
 
       <div className={styles.retakeBlock}>
         <Button variant="ghost" fullWidth onClick={onRetake}>Retake quiz</Button>
-        <p className={styles.actionNote}>Adds a new result to your history</p>
       </div>
 
       {confirmReset ? (
@@ -465,7 +462,6 @@ function ColorPreviousResultActions({ onRetake, onReset, resetting }) {
           <button type="button" className={styles.textLink} onClick={() => setConfirmReset(true)}>
             Reset this section
           </button>
-          <p className={styles.actionNote}>Clears your current result, keeps your history</p>
         </div>
       )}
 
@@ -626,7 +622,7 @@ export default function ColorQuiz() {
     if (attemptError) { console.error('[ColorQuiz] quiz_attempts error:', attemptError); setSaving(false); return }
 
     const { error: summaryError } = await supabase.from('style_summary').upsert(
-      { user_id: user.id, color_season: newResult.season },
+      { user_id: user.id, color_season: newResult.season, color_confidence: newResult.confidence },
       { onConflict: 'user_id' }
     )
     if (summaryError) console.error('[ColorQuiz] style_summary error:', summaryError)
