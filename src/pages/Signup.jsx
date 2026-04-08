@@ -43,6 +43,7 @@ function ConfirmationView({ email, onTryAgain }) {
 }
 
 export default function Signup() {
+  const [firstName, setFirstName]             = useState('')
   const [email, setEmail]                     = useState('')
   const [password, setPassword]               = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -54,6 +55,10 @@ export default function Signup() {
 
   function validate() {
     const next = {}
+
+    if (!firstName.trim()) {
+      next.firstName = 'First name is required.'
+    }
 
     if (!email) {
       next.email = 'Email is required.'
@@ -89,7 +94,11 @@ export default function Signup() {
     setErrors({})
     setLoading(true)
 
-    const { error } = await supabase.auth.signUp({ email, password })
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { full_name: firstName.trim() } },
+    })
 
     setLoading(false)
 
@@ -124,6 +133,7 @@ export default function Signup() {
     setConfirmPassword('')
     setErrors({})
     setFormError('')
+    setFirstName('')
   }
 
   return (
@@ -144,6 +154,15 @@ export default function Signup() {
               </div>
 
               <form onSubmit={handleSubmit} noValidate className={styles.form}>
+                <TextInput
+                  label="First name"
+                  type="text"
+                  autoComplete="given-name"
+                  value={firstName}
+                  onChange={e => { setFirstName(e.target.value); clearError('firstName') }}
+                  error={errors.firstName}
+                />
+
                 <TextInput
                   label="Email"
                   type="email"
