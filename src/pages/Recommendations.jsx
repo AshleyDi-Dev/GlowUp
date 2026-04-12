@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecommendations } from '../hooks/useRecommendations'
+import ImagePlaceholder from '../components/ImagePlaceholder'
 import styles from './Recommendations.module.css'
 
 // ── Chevron icon ──────────────────────────────────────────────────
@@ -107,6 +108,7 @@ function GarmentCard({ label, data }) {
     <Card eyebrow="Clothing" title={label}>
       {data ? (
         <>
+          <ImagePlaceholder />
           <ChipRow items={data.whatWorks} />
           <AvoidBlock items={data.avoid} />
         </>
@@ -121,7 +123,10 @@ function NecklinesCard({ necklines }) {
   return (
     <Card eyebrow="Clothing" title="Necklines">
       {necklines ? (
-        <ChipRow items={necklines} />
+        <>
+          <ImagePlaceholder />
+          <ChipRow items={necklines} />
+        </>
       ) : (
         <EmptyState message={GARMENT_NULL_MSG} quizPath="/analyze/body" quizLabel="Take the body quiz" />
       )}
@@ -136,6 +141,7 @@ function HaircutsCard({ haircuts }) {
     <Card eyebrow="Hair" title="Haircuts">
       {haircuts ? (
         <>
+          <ImagePlaceholder />
           <ChipRow items={haircuts.whatWorks} />
           <AvoidBlock items={haircuts.avoid} />
           {haircuts.textureNote && (
@@ -163,6 +169,7 @@ function HairDataCard({ title, data }) {
       {data ? (
         <>
           <p className={styles.whyText}>{data.why}</p>
+          <ImagePlaceholder />
           <ChipRow items={data.whatWorks} />
           <LabelledChips label="Product types to look for" items={data.productTypes} />
           {data.routineNote && (
@@ -190,6 +197,7 @@ function EarringsCard({ accessories }) {
     <Card eyebrow="Accessories" title="Earrings">
       {accessories ? (
         <>
+          <ImagePlaceholder />
           <ChipRow items={accessories.earrings} />
           <AvoidBlock items={accessories.earringsAvoid} />
         </>
@@ -204,7 +212,10 @@ function NecklaceCard({ accessories }) {
   return (
     <Card eyebrow="Accessories" title="Necklace length">
       {accessories ? (
-        <ChipRow items={accessories.necklaceLength} />
+        <>
+          <ImagePlaceholder />
+          <ChipRow items={accessories.necklaceLength} />
+        </>
       ) : (
         <EmptyState message={ACC_NULL_MSG} quizPath="/analyze/face" quizLabel="Take the face quiz" />
       )}
@@ -217,6 +228,7 @@ function GlassesCard({ accessories }) {
     <Card eyebrow="Accessories" title="Glasses frames">
       {accessories ? (
         <>
+          <ImagePlaceholder />
           <ChipRow items={accessories.glassesFrames} />
           {accessories.glassesAvoid && (
             <div className={styles.avoidInline}>
@@ -235,7 +247,10 @@ function HatStylesCard({ accessories }) {
   return (
     <Card eyebrow="Accessories" title="Hat styles">
       {accessories ? (
-        <ChipRow items={accessories.hatStyles} />
+        <>
+          <ImagePlaceholder />
+          <ChipRow items={accessories.hatStyles} />
+        </>
       ) : (
         <EmptyState message={ACC_NULL_MSG} quizPath="/analyze/face" quizLabel="Take the face quiz" />
       )}
@@ -271,6 +286,7 @@ function ColourCard({ color }) {
       {color ? (
         <>
           <p className={styles.whyText}>{color.why}</p>
+          <ImagePlaceholder />
           <SwatchGrid swatches={color.paletteHero} />
           <div className={styles.group}>
             <p className={styles.groupLabel}>Your neutrals</p>
