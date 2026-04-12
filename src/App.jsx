@@ -48,7 +48,7 @@ export default function App() {
             <Route path="/analyze/hair"        element={<HairQuiz />} />
             <Route path="/analyze/color"       element={<ColorQuiz />} />
             <Route path="/profile"             element={<Profile />} />
-            <Route path="/style"               element={<Style />} />
+            <Route path="/style"               element={<Recommendations />} />
             <Route path="/style/outfit-builder" element={<OutfitBuilder />} />
             <Route path="/saved"               element={<Saved />} />
             <Route path="/measurements"        element={<Measurements />} />
