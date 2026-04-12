@@ -15,55 +15,16 @@
   gap: var(--space-lg);
 }
 
-/* ── Header ──────────────────────────────────── */
+/* ── Page header ─────────────────────────────── */
 
-.header {
+.pageHeader {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
   padding-bottom: var(--space-sm);
 }
 
-.heading {
-  font-size: var(--text-heading);
-  font-weight: var(--font-weight-medium);
-  letter-spacing: var(--letter-spacing-tight);
-  line-height: var(--line-height-tight);
-  color: var(--color-text-primary);
-}
-
-.subheading {
-  font-size: var(--text-body);
-  color: var(--color-text-secondary);
-  line-height: var(--line-height-body);
-}
-
-/* ── Category cards ──────────────────────────── */
-
-.categories {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-}
-
-.categoryCard {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-lg);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  box-shadow: var(--shadow-card);
-}
-
-.cardTop {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-}
-
-.cardEyebrow {
+.pageEyebrow {
   font-size: var(--text-label);
   font-weight: var(--font-weight-medium);
   letter-spacing: var(--letter-spacing-wide);
@@ -71,21 +32,276 @@
   color: var(--color-text-secondary);
 }
 
-.cardTitle {
-  font-size: var(--text-subheading);
+.pageHeading {
+  font-size: var(--text-heading);
   font-weight: var(--font-weight-medium);
   letter-spacing: var(--letter-spacing-tight);
-  color: var(--color-text-primary);
   line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
 }
 
-.cardNote {
-  font-size: var(--text-caption);
+.pageSubheading {
+  font-size: var(--text-body);
   color: var(--color-text-secondary);
   line-height: var(--line-height-body);
 }
 
-/* ── Error state ─────────────────────────────── */
+/* ── Section card ────────────────────────────── */
+
+.section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  box-shadow: var(--shadow-card);
+}
+
+.sectionHead {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sectionEyebrow {
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.sectionTitle {
+  font-size: var(--text-subheading);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+}
+
+/* ── Labelled group ──────────────────────────── */
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.groupLabel {
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+/* ── Chips ───────────────────────────────────── */
+
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-family);
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 100px;
+  padding: var(--space-xs) var(--space-sm);
+  line-height: var(--line-height-tight);
+}
+
+/* ── Why paragraph ───────────────────────────── */
+
+.whyText {
+  font-size: var(--text-body);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+}
+
+/* ── Pattern / routine note ──────────────────── */
+
+.patternNote {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+  font-style: italic;
+}
+
+/* ── Avoid block ─────────────────────────────── */
+
+.avoidBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding-left: var(--space-sm);
+  border-left: 2px solid var(--color-border);
+}
+
+.avoidLabel {
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  opacity: 0.7;
+}
+
+.avoidList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.avoidItem {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+  opacity: 0.8;
+}
+
+/* ── Avoid inline (used in accessories) ─────── */
+
+.avoidInline {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 4px;
+  padding-left: var(--space-sm);
+  border-left: 2px solid var(--color-border);
+}
+
+.avoidInlineText {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+  opacity: 0.8;
+}
+
+/* ── Colour swatches ─────────────────────────── */
+
+.swatchGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.swatchItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 60px;
+}
+
+.swatchColor {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+}
+
+.swatchItemSm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 52px;
+}
+
+.swatchColorSm {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+}
+
+.swatchName {
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  text-align: center;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+/* ── Upgrade teaser ──────────────────────────── */
+
+.teaser {
+  background: var(--color-accent-muted);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.teaserText {
+  font-size: var(--text-caption);
+  color: var(--color-accent);
+  line-height: var(--line-height-body);
+}
+
+/* ── Hair subsections ────────────────────────── */
+
+.hairSubsection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.subsectionTitle {
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
+}
+
+.subsectionDivider {
+  height: 1px;
+  background: var(--color-border);
+  margin: var(--space-xs) 0;
+}
+
+/* ── Empty section ───────────────────────────── */
+
+.emptySection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  align-items: flex-start;
+}
+
+.emptyText {
+  font-size: var(--text-body);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+}
+
+.emptyLink {
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-accent);
+  padding-bottom: 1px;
+}
+
+.emptyLink:hover {
+  opacity: 0.75;
+}
+
+/* ── Error ───────────────────────────────────── */
 
 .errorText {
   font-size: var(--text-body);
