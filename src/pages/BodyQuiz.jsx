@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import QuizEngine from '../components/QuizEngine'
 import Button from '../components/Button'
 import styles from './BodyQuiz.module.css'
+import ImagePlaceholder from '../components/ImagePlaceholder'
 
 // ── Questions ────────────────────────────────────────────────────
 
@@ -331,6 +332,8 @@ function ResultScreen({ resultType, confidence, onSave, onRetake, onReset, savin
           <p className={styles.resultDescription}>{result.description}</p>
         </div>
 
+        <ImagePlaceholder />
+
         <div className={styles.whatThisMeans}>
           <p className={styles.sectionHeading}>What this means</p>
           <ul className={styles.meansList}>
@@ -371,6 +374,8 @@ function PreviousResultScreen({ resultType, onRetake, onReset, resetting }) {
           <p className={styles.resultSummary}>{result.summary}</p>
           <p className={styles.resultDescription}>{result.description}</p>
         </div>
+
+        <ImagePlaceholder />
 
         <div className={styles.whatThisMeans}>
           <p className={styles.sectionHeading}>What this means</p>

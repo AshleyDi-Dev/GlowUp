@@ -6,6 +6,7 @@ import QuizEngine from '../components/QuizEngine'
 import Button from '../components/Button'
 import { HairTextureGuide } from '../components/HairGuide'
 import styles from './HairQuiz.module.css'
+import ImagePlaceholder from '../components/ImagePlaceholder'
 
 // ── Shared options ───────────────────────────────────────────────
 
@@ -536,6 +537,8 @@ function ProfileContent({ result, eyebrow }) {
         </h1>
         <p className={styles.resultSummary}>{summary}</p>
       </div>
+
+      <ImagePlaceholder />
 
       <div className={styles.attributes}>
         <div className={styles.attribute}>

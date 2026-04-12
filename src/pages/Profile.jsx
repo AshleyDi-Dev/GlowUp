@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import Button from '../components/Button'
 import styles from './Profile.module.css'
+import ImagePlaceholder from '../components/ImagePlaceholder'
 
 // ── Content data ──────────────────────────────────────────────────
 
@@ -279,6 +280,7 @@ function BodySection({ bodyType, onReset, resetting }) {
     <SectionCard eyebrow="Body proportions">
       <p className={styles.resultTitle}>{data.label}</p>
       <p className={styles.resultDesc}>{data.description}</p>
+      <ImagePlaceholder />
       <div className={styles.cardActions}>
         <RetakeLink to="/analyze/body" />
         <ResetControl onReset={onReset} resetting={resetting} />
@@ -308,6 +310,7 @@ function FaceSection({ faceShape, onReset, resetting }) {
     <SectionCard eyebrow="Face shape">
       <p className={styles.resultTitle}>{data.label}</p>
       <p className={styles.resultDesc}>{data.description}</p>
+      <ImagePlaceholder />
       <div className={styles.cardActions}>
         <RetakeLink to="/analyze/face" />
         <ResetControl onReset={onReset} resetting={resetting} />
@@ -341,6 +344,7 @@ function HairSection({ summary, onReset, resetting }) {
     <SectionCard eyebrow="Hair profile">
       <p className={styles.resultTitle}>{combinedLabel}</p>
       <p className={styles.resultDesc}>{desc}</p>
+      <ImagePlaceholder />
       <div className={styles.cardActions}>
         <RetakeLink to="/analyze/hair" />
         <ResetControl onReset={onReset} resetting={resetting} />
@@ -394,6 +398,7 @@ function ColorSection({ colorSeason, onReset, resetting }) {
       </div>
 
       <p className={styles.resultDesc}>{data.description}</p>
+      <ImagePlaceholder />
 
       <div className={styles.cardActions}>
         <RetakeLink to="/analyze/color" />
