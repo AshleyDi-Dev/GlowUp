@@ -501,3 +501,228 @@ export const accessoryRules = {
   },
 
 }
+
+
+// ── Hair rules ─────────────────────────────────────────────────────
+// Sourced from: style_summary.hair_texture, hair_density, hair_porosity
+// Each attribute is looked up independently — they do not cross-reference.
+//
+// hair_texture: Straight | Wavy | Curly | Coily
+// hair_density: Fine | Medium | Thick
+// hair_porosity: Low | Normal | High
+
+export const hairRules = {
+
+  texture: {
+
+    Straight: {
+      whatWorks: [
+        'Layered cuts that introduce movement and prevent the hair from lying completely flat',
+        'Blunt bobs or lobs that use the natural sleekness to create a clean, intentional shape',
+        'Sleek blowouts or glossy styles that lean into the texture rather than fighting it',
+      ],
+      why: 'Your hair tends to lie flat and smooth naturally, which means cuts with internal layering or deliberate shape may add the most dimension without requiring much effort to maintain.',
+      avoid: [
+        'Very heavy one-length styles with no layering, which can look flat rather than sleek',
+        'Curling without the right products — styles tend to drop relatively quickly on straight hair',
+        'Root-heavy volume styles that need significant product support to stay lifted',
+      ],
+      productTypes: [
+        'Volumising mousse',
+        'Lightweight heat protectant spray',
+        'Shine-enhancing serum',
+      ],
+      routineNote: 'Straight hair tends to show oil build-up more quickly than other textures — washing every one to two days, or using a dry shampoo in between, can help maintain a fresh look.',
+    },
+
+    Wavy: {
+      whatWorks: [
+        'Wash-and-go styles that let the natural wave pattern emerge with minimal interference',
+        'Layers that reduce bulk and encourage the wave to fall with more definition',
+        'Diffusing on low heat rather than blow-drying straight — it tends to set the wave without creating frizz',
+      ],
+      why: 'Your hair tends to sit between straight and curly, with a natural texture that can range from gentle bends to defined S-waves — working with that pattern rather than against it often produces the most effortless results.',
+      avoid: [
+        'Brushing when dry, which can break up the wave and cause frizz',
+        'Heavy creams or oils that weigh the wave down before it has a chance to form',
+        'Very short blunt cuts without layering, which can make waves feel bushy rather than shaped',
+      ],
+      productTypes: [
+        'Curl-enhancing cream or mousse',
+        'Lightweight leave-in conditioner',
+        'Diffuser attachment',
+      ],
+      routineNote: 'Scrunching product into damp hair and either air-drying or diffusing tends to give the most defined, frizz-free waves — avoid touching the hair while it dries to prevent disrupting the pattern.',
+    },
+
+    Curly: {
+      whatWorks: [
+        'Layered cuts that remove bulk and allow individual curls to spring into their natural shape',
+        'Diffusing on low speed and heat rather than blow-drying straight',
+        'Curl-friendly routines that prioritise moisture and gentle handling',
+      ],
+      why: 'Your hair tends to have a defined curl pattern that responds well to moisture and low-manipulation styling — the less it\'s disturbed while drying, the more consistently it may behave.',
+      avoid: [
+        'Brushing when dry, which tends to cause frizz and break up curl clumps',
+        'Sulphate-heavy shampoos that can strip the moisture curly hair relies on',
+        'Heat styling without a protectant, which can disrupt the curl pattern over time',
+      ],
+      productTypes: [
+        'Curl-defining gel or cream',
+        'Deep conditioning mask',
+        'Microfibre towel or cotton T-shirt for drying',
+      ],
+      routineNote: 'Refreshing curls on non-wash days with a light mist of water and a small amount of product can significantly extend the life of a style — re-wetting and scrunching tends to revive shape without a full wash.',
+    },
+
+    Coily: {
+      whatWorks: [
+        'Protective styles like twists, braids, or updos that retain length and minimise daily manipulation',
+        'Twist-outs or braid-outs for definition and stretch without heat',
+        'Styles that embrace natural shrinkage rather than trying to counteract it',
+      ],
+      why: 'Your hair tends to have tight, springy coils that are naturally moisture-hungry — styles and routines built around hydration and gentle handling may produce the most consistent, healthy results.',
+      avoid: [
+        'Fine-tooth combs on dry hair, which can cause breakage',
+        'Skipping moisture steps between washes — coily hair tends to dry out faster than other textures',
+        'Styles with excessive tension at the roots, which can stress the hairline over time',
+      ],
+      productTypes: [
+        'Heavy leave-in conditioner or hair butter',
+        'Sealing oil',
+        'Wide-tooth comb or fingers for detangling',
+      ],
+      routineNote: 'Applying product in layers on freshly washed, damp hair — starting with a liquid, then a cream or butter — can help lock in moisture more effectively than a single product step alone.',
+    },
+
+  },
+
+  density: {
+
+    Fine: {
+      whatWorks: [
+        'Blunt cuts or cuts with minimal layering that preserve the appearance of thickness',
+        'Shorter styles — above the shoulder tends to feel fuller and more voluminous',
+        'Volumising blowouts with a round brush that lift at the root',
+      ],
+      why: 'Your hair tends to have a fine strand width, which means individual strands may lack weight — styles that preserve or build perceived thickness at the ends tend to feel most flattering.',
+      avoid: [
+        'Very long, heavy one-length styles that can pull fine hair flat and make it look limp',
+        'Heavy creams or oils applied at the root, which can weigh fine hair down quickly',
+        'Excessive layering that thins the ends and makes the hair look sparse',
+      ],
+      productTypes: [
+        'Volumising mousse',
+        'Lightweight dry shampoo',
+        'Texturising spray',
+      ],
+      routineNote: 'Applying products to the mid-lengths and ends rather than the roots can help avoid weighing fine hair down at the scalp — a small amount goes a long way.',
+    },
+
+    Medium: {
+      whatWorks: [
+        'Most cut styles tend to suit well — layers, blunt cuts, and textured finishes all work',
+        'Versatile for both heat styling and air-drying without needing heavy product support',
+        'A range of lengths tend to work, from shorter bobs to longer styles',
+      ],
+      why: 'Your hair tends to have a density that sits in a comfortable middle ground — enough body to hold styles without the weight that can make management challenging.',
+      avoid: [
+        'Skipping moisture balance — medium density hair can tip toward dryness or oiliness if the routine isn\'t calibrated to it',
+        'Stacking chemical treatments too close together without adequate recovery time',
+        'Neglecting regular trims, which can leave medium density hair looking uneven at the ends',
+      ],
+      productTypes: [
+        'Balanced leave-in conditioner',
+        'Lightweight styling cream',
+        'Heat protectant',
+      ],
+      routineNote: 'Medium density hair tends to be relatively forgiving — regular trims every eight to twelve weeks and a consistent wash routine are usually enough to keep it looking its best.',
+    },
+
+    Thick: {
+      whatWorks: [
+        'Layered cuts that remove bulk and introduce movement — without layers, thick hair can feel heavy and shapeless',
+        'Longer styles that use the natural weight to smooth and calm the surface',
+        'Razor cuts or point cuts for texture and a lighter finish at the ends',
+      ],
+      why: 'Your hair tends to have a high density with a lot of strands — strategic layering and moisture-focused products can turn that natural volume into a genuine asset rather than a challenge.',
+      avoid: [
+        'Blunt one-length cuts with no layering, which can create a triangular or boxy silhouette',
+        'Skipping deep conditioning — thick hair can become dry and prone to frizz without regular moisture',
+        'Over-touching or over-brushing when styled, which tends to disrupt the shape and add frizz',
+      ],
+      productTypes: [
+        'Smoothing serum or cream',
+        'Deep conditioning mask',
+        'Anti-frizz oil for finishing',
+      ],
+      routineNote: 'Sectioning hair before applying products or styling tends to make a significant difference with thick hair — working through it unsectioned can lead to uneven coverage and inconsistent results.',
+    },
+
+  },
+
+  porosity: {
+
+    Low: {
+      whatWorks: [
+        'Lightweight, liquid-based products that are less likely to sit on top of the cuticle',
+        'Gentle heat during deep conditioning — a warm towel or heat cap can help open the cuticle and allow moisture in',
+        'Regular clarifying washes to prevent product build-up, which low porosity hair is particularly prone to',
+      ],
+      why: 'Your hair tends to have a tightly closed cuticle, which means it can resist absorbing moisture and may be prone to product sitting on the surface rather than penetrating — lighter formulas and occasional clarifying tends to help most.',
+      avoid: [
+        'Heavy butters or dense creams that tend to layer on top rather than absorb',
+        'Skipping clarifying washes — build-up is more common with low porosity hair and can leave it feeling coated',
+        'Cold water rinses before products have had time to absorb, which can seal the cuticle prematurely',
+      ],
+      productTypes: [
+        'Clarifying shampoo',
+        'Lightweight leave-in mist or spray',
+        'Liquid-based or water-first conditioner',
+      ],
+      routineNote: 'Applying a warm towel or using a heat cap during deep conditioning can help temporarily open the cuticle and allow moisture to penetrate — the heat step may make a noticeable difference in how well products absorb.',
+    },
+
+    Normal: {
+      whatWorks: [
+        'A straightforward wash and condition routine tends to be sufficient — most product types absorb well',
+        'A balance of moisture and protein treatments maintains elasticity and shine effectively',
+        'Flexibility to use a wider range of product weights and textures',
+      ],
+      why: 'Your hair tends to absorb and retain moisture at a balanced rate, which means it\'s generally responsive to a consistent routine without needing significant product adjustments.',
+      avoid: [
+        'Over-processing or overlapping chemical treatments without adequate recovery time between sessions',
+        'Neglecting moisture over time — even normal porosity hair can drift toward dryness with repeated heat or colour',
+        'Inconsistent routines, which can gradually shift the hair\'s moisture balance',
+      ],
+      productTypes: [
+        'Balanced shampoo and conditioner',
+        'Leave-in conditioner',
+        'Occasional protein treatment',
+      ],
+      routineNote: 'A consistent routine tends to be the most effective approach — washing two to three times a week and conditioning each time generally keeps normal porosity hair in good condition without overcomplicating things.',
+    },
+
+    High: {
+      whatWorks: [
+        'Protein treatments to temporarily fill gaps in the cuticle and improve elasticity',
+        'Heavier moisturisers and sealants that can compensate for the speed at which moisture is lost',
+        'Layered moisture methods that add liquid, then cream, then a sealing oil or butter',
+      ],
+      why: 'Your hair tends to have a more open or porous cuticle, which means it absorbs moisture quickly but may lose it just as fast — sealing the moisture in after application tends to make the biggest difference.',
+      avoid: [
+        'Over-washing, which can strip what moisture high porosity hair manages to retain',
+        'Skipping a sealant step after moisturising — without it, moisture tends to evaporate relatively quickly',
+        'Excessive heat styling without a protectant, which can further lift and damage the cuticle over time',
+      ],
+      productTypes: [
+        'Protein-based or strengthening conditioner',
+        'Sealing oil or butter',
+        'Deep conditioning mask for weekly use',
+      ],
+      routineNote: 'Finishing a wash with a cool or cold water rinse can help temporarily close the cuticle and seal in moisture — it\'s a simple step that can noticeably extend how long the hair stays hydrated between washes.',
+    },
+
+  },
+
+}
