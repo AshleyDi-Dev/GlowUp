@@ -68,7 +68,7 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-md);
-  align-items: stretch;
+  align-items: start;
 }
 
 @media (min-width: 1024px) {
@@ -322,27 +322,6 @@
   font-size: var(--text-caption);
   color: var(--color-accent);
   line-height: var(--line-height-body);
-}
-
-/* ── Hair subsections ────────────────────────── */
-
-.hairSubsection {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-.subsectionTitle {
-  font-size: var(--text-body);
-  font-weight: var(--font-weight-medium);
-  letter-spacing: var(--letter-spacing-tight);
-  color: var(--color-text-primary);
-}
-
-.subsectionDivider {
-  height: 1px;
-  background: var(--color-border);
-  margin: var(--space-xs) 0;
 }
 
 /* ── Empty section ───────────────────────────── */

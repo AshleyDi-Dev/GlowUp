@@ -153,86 +153,91 @@ function HaircutsCard({ haircuts }) {
   )
 }
 
-// ── Hair info card ────────────────────────────────────────────────
+// ── Hair cards ────────────────────────────────────────────────────
 
-function HairSubsection({ title, data }) {
-  if (!data) return null
+const HAIR_NULL_MSG = 'Complete the hair quiz to unlock this recommendation.'
+
+function HairDataCard({ title, data }) {
   return (
-    <div className={styles.hairSubsection}>
-      <p className={styles.subsectionTitle}>{title}</p>
-      <p className={styles.whyText}>{data.why}</p>
-      <ChipRow items={data.whatWorks} />
-      <LabelledChips label="Product types to look for" items={data.productTypes} />
-      {data.routineNote && (
-        <p className={styles.patternNote}>{data.routineNote}</p>
-      )}
-      <AvoidBlock items={data.avoid} />
-    </div>
-  )
-}
-
-function HairInfoCard({ hair }) {
-  const subsections = [
-    { key: 'texture',  title: 'Texture',  data: hair?.texture },
-    { key: 'density',  title: 'Density',  data: hair?.density },
-    { key: 'porosity', title: 'Porosity', data: hair?.porosity },
-  ].filter(s => s.data)
-
-  return (
-    <Card eyebrow="Hair" title="Hair info">
-      {subsections.length > 0 ? (
-        subsections.map((s, i) => (
-          <div key={s.key}>
-            {i > 0 && <div className={styles.subsectionDivider} />}
-            <HairSubsection title={s.title} data={s.data} />
-          </div>
-        ))
+    <Card eyebrow="Hair" title={title}>
+      {data ? (
+        <>
+          <p className={styles.whyText}>{data.why}</p>
+          <ChipRow items={data.whatWorks} />
+          <LabelledChips label="Product types to look for" items={data.productTypes} />
+          {data.routineNote && (
+            <p className={styles.patternNote}>{data.routineNote}</p>
+          )}
+          <AvoidBlock items={data.avoid} />
+        </>
       ) : (
-        <EmptyState
-          message="Complete the hair quiz to unlock personalised hair recommendations."
-          quizPath="/analyze/hair"
-          quizLabel="Take the hair quiz"
-        />
+        <EmptyState message={HAIR_NULL_MSG} quizPath="/analyze/hair" quizLabel="Take the hair quiz" />
       )}
     </Card>
   )
 }
 
-// ── Accessories card ──────────────────────────────────────────────
+function TextureCard({ hair })  { return <HairDataCard title="Texture"  data={hair?.texture}  /> }
+function DensityCard({ hair })  { return <HairDataCard title="Density"  data={hair?.density}  /> }
+function PorosityCard({ hair }) { return <HairDataCard title="Porosity" data={hair?.porosity} /> }
 
-function AccessoriesCard({ accessories }) {
+// ── Accessory cards ───────────────────────────────────────────────
+
+const ACC_NULL_MSG = 'Complete the face shape quiz to unlock this recommendation.'
+
+function EarringsCard({ accessories }) {
   return (
-    <Card eyebrow="Accessories" title="Finishing touches">
+    <Card eyebrow="Accessories" title="Earrings">
       {accessories ? (
         <>
-          <p className={styles.whyText}>{accessories.why}</p>
-          <div className={styles.group}>
-            <p className={styles.groupLabel}>Earrings</p>
-            <ChipRow items={accessories.earrings} />
-            {accessories.earringsAvoid?.length > 0 && (
-              <div className={styles.avoidInline}>
-                {accessories.earringsAvoid.map((item, i) => (
-                  <p key={i} className={styles.avoidInlineText}>{item}</p>
-                ))}
-              </div>
-            )}
-          </div>
-          <LabelledChips label="Necklace length" items={accessories.necklaceLength} />
-          <div className={styles.group}>
-            <p className={styles.groupLabel}>Glasses frames</p>
-            <ChipRow items={accessories.glassesFrames} />
-            {accessories.glassesAvoid && (
-              <p className={styles.avoidInlineText}>{accessories.glassesAvoid}</p>
-            )}
-          </div>
-          <LabelledChips label="Hat styles" items={accessories.hatStyles} />
+          <ChipRow items={accessories.earrings} />
+          <AvoidBlock items={accessories.earringsAvoid} />
         </>
       ) : (
-        <EmptyState
-          message="Complete the face shape quiz to unlock accessory recommendations."
-          quizPath="/analyze/face"
-          quizLabel="Take the face quiz"
-        />
+        <EmptyState message={ACC_NULL_MSG} quizPath="/analyze/face" quizLabel="Take the face quiz" />
+      )}
+    </Card>
+  )
+}
+
+function NecklaceCard({ accessories }) {
+  return (
+    <Card eyebrow="Accessories" title="Necklace length">
+      {accessories ? (
+        <ChipRow items={accessories.necklaceLength} />
+      ) : (
+        <EmptyState message={ACC_NULL_MSG} quizPath="/analyze/face" quizLabel="Take the face quiz" />
+      )}
+    </Card>
+  )
+}
+
+function GlassesCard({ accessories }) {
+  return (
+    <Card eyebrow="Accessories" title="Glasses frames">
+      {accessories ? (
+        <>
+          <ChipRow items={accessories.glassesFrames} />
+          {accessories.glassesAvoid && (
+            <div className={styles.avoidInline}>
+              <p className={styles.avoidInlineText}>{accessories.glassesAvoid}</p>
+            </div>
+          )}
+        </>
+      ) : (
+        <EmptyState message={ACC_NULL_MSG} quizPath="/analyze/face" quizLabel="Take the face quiz" />
+      )}
+    </Card>
+  )
+}
+
+function HatStylesCard({ accessories }) {
+  return (
+    <Card eyebrow="Accessories" title="Hat styles">
+      {accessories ? (
+        <ChipRow items={accessories.hatStyles} />
+      ) : (
+        <EmptyState message={ACC_NULL_MSG} quizPath="/analyze/face" quizLabel="Take the face quiz" />
       )}
     </Card>
   )
@@ -340,17 +345,29 @@ export default function Recommendations() {
           </div>
         </div>
 
-        {/* ── Group 2: Hair & Accessories ── */}
+        {/* ── Group 2: Hair ── */}
         <div className={styles.groupSection}>
-          <h2 className={styles.groupHeading}>Hair &amp; Accessories</h2>
+          <h2 className={styles.groupHeading}>Hair</h2>
           <div className={styles.cardGrid}>
-            <HaircutsCard    haircuts={haircuts}       />
-            <HairInfoCard    hair={hair}               />
-            <AccessoriesCard accessories={accessories} />
+            <HaircutsCard haircuts={haircuts} />
+            <TextureCard  hair={hair} />
+            <DensityCard  hair={hair} />
+            <PorosityCard hair={hair} />
           </div>
         </div>
 
-        {/* ── Group 3: Colour ── */}
+        {/* ── Group 3: Accessories ── */}
+        <div className={styles.groupSection}>
+          <h2 className={styles.groupHeading}>Accessories</h2>
+          <div className={styles.cardGrid}>
+            <EarringsCard   accessories={accessories} />
+            <NecklaceCard   accessories={accessories} />
+            <GlassesCard    accessories={accessories} />
+            <HatStylesCard  accessories={accessories} />
+          </div>
+        </div>
+
+        {/* ── Group 4: Colour ── */}
         <div className={styles.groupSection}>
           <h2 className={styles.groupHeading}>Colour</h2>
           <div className={styles.cardGrid}>
