@@ -405,33 +405,17 @@ function ColorSection({ colorSeason, onReset, resetting }) {
 
 // ── Section F — Style snapshot ────────────────────────────────────
 
-function SnapshotSection({ summary }) {
+function SnapshotCard({ summary }) {
   const bullets = buildSummaryBullets(summary)
-  const [hint, setHint] = useState('')
-
   if (bullets.length < 2) return null
-
-  function showHint() {
-    setHint('Coming soon')
-    setTimeout(() => setHint(''), 2000)
-  }
-
   return (
     <div className={styles.snapshotCard}>
       <p className={styles.sectionEyebrow}>Your style snapshot</p>
-
       <ul className={styles.bulletList}>
         {bullets.map((b, i) => (
           <li key={i} className={styles.bullet}>{b}</li>
         ))}
       </ul>
-
-      <div className={styles.snapshotActions}>
-        <Button fullWidth onClick={showHint}>View recommendations</Button>
-        <Button variant="ghost" fullWidth onClick={showHint}>Build an outfit</Button>
-        <Button variant="ghost" fullWidth onClick={showHint}>Save wardrobe notes</Button>
-        {hint && <p className={styles.comingSoon} role="status">{hint}</p>}
-      </div>
     </div>
   )
 }
@@ -444,6 +428,12 @@ export default function Profile() {
   const [summary, setSummary]       = useState({})
   const [measurements, setMeasurements] = useState(null)
   const [resetting, setResetting]   = useState(null)  // 'hair' | 'color'
+  const [hint, setHint]             = useState('')
+
+  function showHint() {
+    setHint('Coming soon')
+    setTimeout(() => setHint(''), 2000)
+  }
 
   useEffect(() => {
     async function load() {
@@ -497,37 +487,48 @@ export default function Profile() {
           <h1 className={styles.heading}>Your style profile</h1>
         </div>
 
-        <MeasurementsSection measurements={measurements} />
+        <SnapshotCard summary={summary} />
 
-        <BodySection
-          bodyType={summary.body_type ?? null}
-          onReset={() => handleReset('body', { body_type: null })}
-          resetting={resetting === 'body'}
-        />
+        <div className={styles.sectionsGrid}>
+          <MeasurementsSection measurements={measurements} />
 
-        <FaceSection
-          faceShape={summary.face_shape ?? null}
-          onReset={() => handleReset('face', { face_shape: null })}
-          resetting={resetting === 'face'}
-        />
+          <BodySection
+            bodyType={summary.body_type ?? null}
+            onReset={() => handleReset('body', { body_type: null })}
+            resetting={resetting === 'body'}
+          />
 
-        <HairSection
-          summary={summary}
-          onReset={() => handleReset('hair', {
-            hair_texture: null, hair_density: null, hair_porosity: null,
-            hair_current_color: null, hair_natural_color: null,
-            hair_styling_tendency: null, hair_style_hold: null, hair_style: null,
-          })}
-          resetting={resetting === 'hair'}
-        />
+          <FaceSection
+            faceShape={summary.face_shape ?? null}
+            onReset={() => handleReset('face', { face_shape: null })}
+            resetting={resetting === 'face'}
+          />
 
-        <ColorSection
-          colorSeason={summary.color_season ?? null}
-          onReset={() => handleReset('color', { color_season: null })}
-          resetting={resetting === 'color'}
-        />
+          <HairSection
+            summary={summary}
+            onReset={() => handleReset('hair', {
+              hair_texture: null, hair_density: null, hair_porosity: null,
+              hair_current_color: null, hair_natural_color: null,
+              hair_styling_tendency: null, hair_style_hold: null, hair_style: null,
+            })}
+            resetting={resetting === 'hair'}
+          />
 
-        <SnapshotSection summary={summary} />
+          <ColorSection
+            colorSeason={summary.color_season ?? null}
+            onReset={() => handleReset('color', { color_season: null })}
+            resetting={resetting === 'color'}
+          />
+        </div>
+
+        {buildSummaryBullets(summary).length >= 2 && (
+          <div className={styles.actionsBar}>
+            <Button fullWidth onClick={showHint}>View recommendations</Button>
+            <Button variant="ghost" fullWidth onClick={showHint}>Build an outfit</Button>
+            <Button variant="ghost" fullWidth onClick={showHint}>Save wardrobe notes</Button>
+            {hint && <p className={styles.comingSoon} role="status">{hint}</p>}
+          </div>
+        )}
 
         <Link to="/analyze" className={styles.textLink}>
           Back to Analyze

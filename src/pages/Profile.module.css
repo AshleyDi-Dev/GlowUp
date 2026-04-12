@@ -8,11 +8,26 @@
 
 .container {
   width: 100%;
-  max-width: 480px;
+  max-width: 1200px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
+}
+
+/* ── Sections grid ───────────────────────────── */
+
+.sectionsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+  align-items: stretch;
+}
+
+@media (min-width: 1024px) {
+  .sectionsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 /* ── Page header ─────────────────────────────── */
@@ -260,6 +275,18 @@
   flex-direction: column;
   gap: var(--space-sm);
   align-items: center;
+}
+
+/* ── Actions bar (below grid) ────────────────── */
+
+.actionsBar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  align-self: stretch;
 }
 
 .comingSoon {
