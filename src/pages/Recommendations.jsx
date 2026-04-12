@@ -39,11 +39,11 @@ function AvoidBlock({ items }) {
   )
 }
 
-function SectionCard({ eyebrow, title, children }) {
+function Card({ eyebrow, title, children }) {
   return (
     <div className={styles.section}>
       <div className={styles.sectionHead}>
-        <p className={styles.sectionEyebrow}>{eyebrow}</p>
+        {eyebrow && <p className={styles.sectionEyebrow}>{eyebrow}</p>}
         <h2 className={styles.sectionTitle}>{title}</h2>
       </div>
       {children}
@@ -51,7 +51,7 @@ function SectionCard({ eyebrow, title, children }) {
   )
 }
 
-function EmptySection({ message, quizPath, quizLabel }) {
+function EmptyState({ message, quizPath, quizLabel }) {
   return (
     <div className={styles.emptySection}>
       <p className={styles.emptyText}>{message}</p>
@@ -60,183 +60,82 @@ function EmptySection({ message, quizPath, quizLabel }) {
   )
 }
 
-// ── Clothing section ──────────────────────────────────────────────
+// ── Garment cards ─────────────────────────────────────────────────
 
-const GARMENT_LABELS = {
-  tops:      'Tops',
-  jackets:   'Jackets',
-  bottoms:   'Bottoms',
-  dresses:   'Dresses',
-  skirts:    'Skirts',
-  outerwear: 'Outerwear',
-}
+const GARMENT_NULL_MSG = 'Complete the body proportions quiz to unlock this category.'
 
-const GARMENT_ORDER = ['tops', 'jackets', 'bottoms', 'dresses', 'skirts', 'outerwear']
-
-function GarmentSubsection({ title, data }) {
-  if (!data) return null
+function GarmentCard({ label, data }) {
+  if (!data) {
+    return (
+      <Card eyebrow="Clothing" title={label}>
+        <EmptyState message={GARMENT_NULL_MSG} quizPath="/analyze/body" quizLabel="Take the body quiz" />
+      </Card>
+    )
+  }
   return (
-    <div className={styles.hairSubsection}>
-      <p className={styles.subsectionTitle}>{title}</p>
+    <Card eyebrow="Clothing" title={label}>
       <ChipRow items={data.whatWorks} />
       <AvoidBlock items={data.avoid} />
-    </div>
+    </Card>
   )
 }
 
-function ClothingSection({ clothing }) {
-  if (!clothing) {
+function NecklinesCard({ necklines }) {
+  if (!necklines) {
     return (
-      <SectionCard eyebrow="Clothing" title="Clothing & silhouettes">
-        <EmptySection
-          message="Complete the body proportions quiz to unlock clothing recommendations."
-          quizPath="/analyze/body"
-          quizLabel="Take the body quiz"
-        />
-      </SectionCard>
+      <Card eyebrow="Clothing" title="Necklines">
+        <EmptyState message={GARMENT_NULL_MSG} quizPath="/analyze/body" quizLabel="Take the body quiz" />
+      </Card>
     )
   }
-
-  const subsections = GARMENT_ORDER.filter(key => clothing[key])
-
   return (
-    <SectionCard eyebrow="Clothing" title="Clothing & silhouettes">
-      {subsections.map((key, i) => (
-        <div key={key}>
-          {i > 0 && <div className={styles.subsectionDivider} />}
-          <GarmentSubsection title={GARMENT_LABELS[key]} data={clothing[key]} />
-        </div>
-      ))}
-      <LabelledChips label="Necklines that tend to suit" items={clothing.necklines} />
-    </SectionCard>
+    <Card eyebrow="Clothing" title="Necklines">
+      <ChipRow items={necklines} />
+    </Card>
   )
 }
 
-// ── Colour section ────────────────────────────────────────────────
+// ── Haircuts card ─────────────────────────────────────────────────
 
-function SwatchGrid({ swatches, small = false }) {
-  if (!swatches?.length) return null
-  return (
-    <div className={styles.swatchGrid}>
-      {swatches.map(({ name, hex }) => (
-        <div key={hex} className={small ? styles.swatchItemSm : styles.swatchItem}>
-          <div
-            className={small ? styles.swatchColorSm : styles.swatchColor}
-            style={{ background: hex }}
-            title={hex}
-            aria-label={name}
-            role="img"
-          />
-          <span className={styles.swatchName}>{name}</span>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function ColourSection({ color }) {
-  if (!color) {
+function HaircutsCard({ haircuts }) {
+  if (!haircuts) {
     return (
-      <SectionCard eyebrow="Colour" title="Your palette">
-        <EmptySection
-          message="Complete the colour analysis quiz to unlock your personal palette."
-          quizPath="/analyze/color"
-          quizLabel="Take the colour quiz"
+      <Card eyebrow="Hair" title="Haircuts">
+        <EmptyState
+          message="Complete the face shape quiz to unlock haircut recommendations."
+          quizPath="/analyze/face"
+          quizLabel="Take the face quiz"
         />
-      </SectionCard>
+      </Card>
     )
   }
-
   return (
-    <SectionCard eyebrow="Colour" title="Your palette">
-      <p className={styles.whyText}>{color.why}</p>
-      <SwatchGrid swatches={color.paletteHero} />
-      <div className={styles.group}>
-        <p className={styles.groupLabel}>Your neutrals</p>
-        <SwatchGrid swatches={color.neutrals} small />
-      </div>
-      {color.patternGuidance && (
-        <p className={styles.patternNote}>{color.patternGuidance}</p>
+    <Card eyebrow="Hair" title="Haircuts">
+      <ChipRow items={haircuts.whatWorks} />
+      <AvoidBlock items={haircuts.avoid} />
+      {haircuts.textureNote && (
+        <p className={styles.patternNote}>{haircuts.textureNote}</p>
       )}
-      <LabelledChips label="Metals" items={color.metals} />
-      <AvoidBlock items={color.avoid} />
-      {color.upgradeTeaser && (
-        <div className={styles.teaser}>
-          <p className={styles.teaserText}>{color.upgradeTeaser}</p>
-        </div>
-      )}
-    </SectionCard>
+    </Card>
   )
 }
 
-// ── Hair section ──────────────────────────────────────────────────
+// ── Accessories card ──────────────────────────────────────────────
 
-function HairSubsection({ title, data }) {
-  if (!data) return null
-  return (
-    <div className={styles.hairSubsection}>
-      <p className={styles.subsectionTitle}>{title}</p>
-      <p className={styles.whyText}>{data.why}</p>
-      <ChipRow items={data.whatWorks} />
-      <LabelledChips label="Product types to look for" items={data.productTypes} />
-      {data.routineNote && (
-        <p className={styles.patternNote}>{data.routineNote}</p>
-      )}
-      <AvoidBlock items={data.avoid} />
-    </div>
-  )
-}
-
-function HairSection({ hair }) {
-  const hasAny = hair && (hair.texture || hair.density || hair.porosity)
-
-  if (!hasAny) {
-    return (
-      <SectionCard eyebrow="Hair" title="Hair guidance">
-        <EmptySection
-          message="Complete the hair quiz to unlock personalised hair recommendations."
-          quizPath="/analyze/hair"
-          quizLabel="Take the hair quiz"
-        />
-      </SectionCard>
-    )
-  }
-
-  const subsections = [
-    { key: 'texture',  title: 'Texture',  data: hair.texture },
-    { key: 'density',  title: 'Density',  data: hair.density },
-    { key: 'porosity', title: 'Porosity', data: hair.porosity },
-  ].filter(s => s.data)
-
-  return (
-    <SectionCard eyebrow="Hair" title="Hair guidance">
-      {subsections.map((s, i) => (
-        <div key={s.key}>
-          {i > 0 && <div className={styles.subsectionDivider} />}
-          <HairSubsection title={s.title} data={s.data} />
-        </div>
-      ))}
-    </SectionCard>
-  )
-}
-
-// ── Accessories section ───────────────────────────────────────────
-
-function AccessoriesSection({ accessories }) {
+function AccessoriesCard({ accessories }) {
   if (!accessories) {
     return (
-      <SectionCard eyebrow="Accessories" title="Finishing touches">
-        <EmptySection
+      <Card eyebrow="Accessories" title="Finishing touches">
+        <EmptyState
           message="Complete the face shape quiz to unlock accessory recommendations."
           quizPath="/analyze/face"
           quizLabel="Take the face quiz"
         />
-      </SectionCard>
+      </Card>
     )
   }
-
   return (
-    <SectionCard eyebrow="Accessories" title="Finishing touches">
+    <Card eyebrow="Accessories" title="Finishing touches">
       <p className={styles.whyText}>{accessories.why}</p>
 
       <div className={styles.group}>
@@ -262,7 +161,114 @@ function AccessoriesSection({ accessories }) {
       </div>
 
       <LabelledChips label="Hat styles" items={accessories.hatStyles} />
-    </SectionCard>
+    </Card>
+  )
+}
+
+// ── Colour card ───────────────────────────────────────────────────
+
+function SwatchGrid({ swatches, small = false }) {
+  if (!swatches?.length) return null
+  return (
+    <div className={styles.swatchGrid}>
+      {swatches.map(({ name, hex }) => (
+        <div key={hex} className={small ? styles.swatchItemSm : styles.swatchItem}>
+          <div
+            className={small ? styles.swatchColorSm : styles.swatchColor}
+            style={{ background: hex }}
+            title={hex}
+            aria-label={name}
+            role="img"
+          />
+          <span className={styles.swatchName}>{name}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function ColourCard({ color }) {
+  if (!color) {
+    return (
+      <Card eyebrow="Colour" title="Your palette">
+        <EmptyState
+          message="Complete the colour analysis quiz to unlock your personal palette."
+          quizPath="/analyze/color"
+          quizLabel="Take the colour quiz"
+        />
+      </Card>
+    )
+  }
+  return (
+    <Card eyebrow="Colour" title="Your palette">
+      <p className={styles.whyText}>{color.why}</p>
+      <SwatchGrid swatches={color.paletteHero} />
+      <div className={styles.group}>
+        <p className={styles.groupLabel}>Your neutrals</p>
+        <SwatchGrid swatches={color.neutrals} small />
+      </div>
+      {color.patternGuidance && (
+        <p className={styles.patternNote}>{color.patternGuidance}</p>
+      )}
+      <LabelledChips label="Metals" items={color.metals} />
+      <AvoidBlock items={color.avoid} />
+      {color.upgradeTeaser && (
+        <div className={styles.teaser}>
+          <p className={styles.teaserText}>{color.upgradeTeaser}</p>
+        </div>
+      )}
+    </Card>
+  )
+}
+
+// ── Hair info card ────────────────────────────────────────────────
+
+function HairSubsection({ title, data }) {
+  if (!data) return null
+  return (
+    <div className={styles.hairSubsection}>
+      <p className={styles.subsectionTitle}>{title}</p>
+      <p className={styles.whyText}>{data.why}</p>
+      <ChipRow items={data.whatWorks} />
+      <LabelledChips label="Product types to look for" items={data.productTypes} />
+      {data.routineNote && (
+        <p className={styles.patternNote}>{data.routineNote}</p>
+      )}
+      <AvoidBlock items={data.avoid} />
+    </div>
+  )
+}
+
+function HairInfoCard({ hair }) {
+  const hasAny = hair && (hair.texture || hair.density || hair.porosity)
+
+  if (!hasAny) {
+    return (
+      <Card eyebrow="Hair" title="Hair info">
+        <EmptyState
+          message="Complete the hair quiz to unlock personalised hair recommendations."
+          quizPath="/analyze/hair"
+          quizLabel="Take the hair quiz"
+        />
+      </Card>
+    )
+  }
+
+  const subsections = [
+    { key: 'texture',  title: 'Texture',  data: hair.texture },
+    { key: 'density',  title: 'Density',  data: hair.density },
+    { key: 'porosity', title: 'Porosity', data: hair.porosity },
+  ].filter(s => s.data)
+
+  return (
+    <Card eyebrow="Hair" title="Hair info">
+      {subsections.map((s, i) => (
+        <div key={s.key}>
+          {i > 0 && <div className={styles.subsectionDivider} />}
+          <HairSubsection title={s.title} data={s.data} />
+        </div>
+      ))}
+    </Card>
   )
 }
 
@@ -285,6 +291,8 @@ export default function Recommendations() {
     )
   }
 
+  const { garments, color, accessories, hair, haircuts } = recommendations ?? {}
+
   return (
     <div className={styles.page}>
       <div className={styles.container}>
@@ -297,10 +305,27 @@ export default function Recommendations() {
           </p>
         </div>
 
-        <ClothingSection  clothing={recommendations?.clothing        ?? null} />
-        <ColourSection    color={recommendations?.color              ?? null} />
-        <HairSection      hair={recommendations?.hair                ?? null} />
-        <AccessoriesSection accessories={recommendations?.accessories ?? null} />
+        {/* ── Clothing ── */}
+        <GarmentCard  label="Tops"      data={garments?.tops}      />
+        <GarmentCard  label="Jackets"   data={garments?.jackets}   />
+        <GarmentCard  label="Bottoms"   data={garments?.bottoms}   />
+        <GarmentCard  label="Dresses"   data={garments?.dresses}   />
+        <GarmentCard  label="Skirts"    data={garments?.skirts}    />
+        <GarmentCard  label="Outerwear" data={garments?.outerwear} />
+        <NecklinesCard necklines={garments?.necklines} />
+
+        {/* ── Face-based ── */}
+        <HaircutsCard    haircuts={haircuts}       />
+        <AccessoriesCard accessories={accessories} />
+
+        {/* ── Colour ── */}
+        <ColourCard color={color} />
+
+        {/* ── Hair info ── */}
+        <HairInfoCard hair={hair} />
+
+        {/* Prints — coming soon */}
+        {/* Glow-up — coming soon */}
 
       </div>
     </div>
