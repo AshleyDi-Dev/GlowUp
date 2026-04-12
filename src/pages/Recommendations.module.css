@@ -1,0 +1,94 @@
+/* ── Page shell ──────────────────────────────── */
+
+.page {
+  min-height: 100svh;
+  padding: var(--space-xl) var(--space-md) var(--space-2xl);
+  background: var(--color-bg);
+}
+
+.container {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+/* ── Header ──────────────────────────────────── */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding-bottom: var(--space-sm);
+}
+
+.heading {
+  font-size: var(--text-heading);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+}
+
+.subheading {
+  font-size: var(--text-body);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+}
+
+/* ── Category cards ──────────────────────────── */
+
+.categories {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.categoryCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  box-shadow: var(--shadow-card);
+}
+
+.cardTop {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.cardEyebrow {
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.cardTitle {
+  font-size: var(--text-subheading);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-tight);
+}
+
+.cardNote {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+}
+
+/* ── Error state ─────────────────────────────── */
+
+.errorText {
+  font-size: var(--text-body);
+  color: var(--color-error);
+  line-height: var(--line-height-body);
+}
