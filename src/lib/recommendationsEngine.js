@@ -9,9 +9,7 @@
 // Any missing or unrecognised field returns null for that category rather
 // than throwing, so it is safe to call with a partially complete summary.
 
-import { garmentRules, colorRules, accessoryRules, hairRules } from './recommendations'
-
-const GARMENT_CATEGORIES = ['tops', 'jackets', 'bottoms', 'dresses', 'skirts', 'outerwear']
+import { garmentRules, colorRules, accessoryRules, hairRules, haircutRules } from './recommendations'
 
 export function getRecommendations(styleSummary = {}) {
   const {
@@ -23,19 +21,21 @@ export function getRecommendations(styleSummary = {}) {
     hair_porosity,
   } = styleSummary
 
-  // ── Clothing ────────────────────────────────────────────────────
-  // Each garment category is keyed by body_type. Necklines use the
-  // body_type base, with face_shape applied as a modifier where one exists.
-  let clothing = null
-  if (body_type) {
-    const faceOverride = garmentRules.necklineFaceModifiers?.[face_shape]?.[body_type]
-    const necklines = faceOverride?.necklines ?? garmentRules.necklines?.[body_type] ?? null
+  // ── Garments ─────────────────────────────────────────────────────
+  // Each category is keyed by body_type. Necklines use the body_type
+  // base, with face_shape applied as a modifier where one exists.
+  const faceNecklineOverride = garmentRules.necklineFaceModifiers?.[face_shape]?.[body_type]
+  const necklines = faceNecklineOverride?.necklines ?? garmentRules.necklines?.[body_type] ?? null
 
-    clothing = { necklines }
-    for (const cat of GARMENT_CATEGORIES) {
-      clothing[cat] = garmentRules[cat]?.[body_type] ?? null
-    }
-  }
+  const garments = body_type ? {
+    tops:      garmentRules.tops?.[body_type]      ?? null,
+    jackets:   garmentRules.jackets?.[body_type]   ?? null,
+    bottoms:   garmentRules.bottoms?.[body_type]   ?? null,
+    dresses:   garmentRules.dresses?.[body_type]   ?? null,
+    skirts:    garmentRules.skirts?.[body_type]    ?? null,
+    outerwear: garmentRules.outerwear?.[body_type] ?? null,
+    necklines,
+  } : null
 
   // ── Colour ──────────────────────────────────────────────────────
   const color = colorRules?.[color_season] ?? null
@@ -50,5 +50,8 @@ export function getRecommendations(styleSummary = {}) {
     porosity: hairRules.porosity?.[hair_porosity] ?? null,
   }
 
-  return { clothing, color, accessories, hair }
+  // ── Haircuts ─────────────────────────────────────────────────────
+  const haircuts = haircutRules?.[face_shape] ?? null
+
+  return { garments, color, accessories, hair, haircuts }
 }
