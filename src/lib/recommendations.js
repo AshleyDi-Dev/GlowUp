@@ -992,3 +992,89 @@ export const hairRules = {
   },
 
 }
+
+
+// ── Haircut rules ──────────────────────────────────────────────────
+// Sourced from: style_summary.face_shape
+// Values: Oval | Round | Heart | Square | Diamond | Oblong
+//
+// textureNote cross-references hair_texture at display time — it is a
+// plain string hint, not a structured lookup.
+
+export const haircutRules = {
+
+  Oval: {
+    whatWorks: [
+      'Most lengths and cuts tend to suit',
+      'Long layers',
+      'Bobs',
+      'Pixie cuts',
+    ],
+    avoid: [
+      'Styles so oversized they obscure the face shape',
+    ],
+    textureNote: 'Straight: any length works well. Wavy or curly: layers encourage movement. Coily: shape cuts that work with natural shrinkage.',
+  },
+
+  Round: {
+    whatWorks: [
+      'Longer styles',
+      'Centre parts',
+      'Long layers that frame the face',
+      'Side-swept styles',
+    ],
+    avoid: [
+      'Very short all-over cuts that sit wide at the sides',
+    ],
+    textureNote: 'Volume at the crown rather than the sides tends to elongate.',
+  },
+
+  Heart: {
+    whatWorks: [
+      'Side-swept fringe',
+      'Chin-length bobs',
+      'Styles with volume at the jaw',
+    ],
+    avoid: [
+      'Very short styles above the jaw that expose the narrow chin',
+    ],
+    textureNote: 'Waves or curls from the jaw down can add welcome width.',
+  },
+
+  Square: {
+    whatWorks: [
+      'Soft layers around the face',
+      'Side parts',
+      'Waves or curls that soften the jaw',
+    ],
+    avoid: [
+      'Very blunt straight styles that emphasise the jaw angle',
+    ],
+    textureNote: 'Texture and movement near the jaw tends to soften strong angles.',
+  },
+
+  Diamond: {
+    whatWorks: [
+      'Side-swept styles',
+      'Chin-length or longer',
+      'Volume at the forehead and jaw',
+    ],
+    avoid: [
+      'Very short sides that emphasise cheekbone width',
+    ],
+    textureNote: 'Fringe or curtain bangs can add width at the forehead.',
+  },
+
+  Oblong: {
+    whatWorks: [
+      'Curtain bangs or fringe',
+      'Styles with width at the sides',
+      'Waves that add volume',
+    ],
+    avoid: [
+      'Very long straight styles with no width',
+    ],
+    textureNote: 'Avoiding too much length and adding horizontal volume tends to suit best.',
+  },
+
+}
