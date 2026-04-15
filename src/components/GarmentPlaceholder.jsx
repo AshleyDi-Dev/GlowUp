@@ -1,4 +1,7 @@
 import styles from './ImagePlaceholder.module.css'
+import BottomsPear1 from '../assets/Bottoms-Pear-1.png'
+import BottomsPear2 from '../assets/Bottoms-Pear-2.png'
+import BottomsPear3 from '../assets/Bottoms-Pear-3.png'
 
 // Asset map: GarmentPlaceholder[category][bodyType] = [img1, img2, img3]
 // Add imports here as images are sourced.
@@ -9,7 +12,7 @@ import styles from './ImagePlaceholder.module.css'
 const GARMENT_ASSETS = {
   Tops:              { Hourglass: [null,null,null], Pear: [null,null,null], Apple: [null,null,null], Rectangle: [null,null,null], 'Inverted Triangle': [null,null,null] },
   Jackets:           { Hourglass: [null,null,null], Pear: [null,null,null], Apple: [null,null,null], Rectangle: [null,null,null], 'Inverted Triangle': [null,null,null] },
-  Bottoms:           { Hourglass: [null,null,null], Pear: [null,null,null], Apple: [null,null,null], Rectangle: [null,null,null], 'Inverted Triangle': [null,null,null] },
+  Bottoms:           { Hourglass: [null,null,null], Pear: [BottomsPear1,BottomsPear2,BottomsPear3], Apple: [null,null,null], Rectangle: [null,null,null], 'Inverted Triangle': [null,null,null] },
   Dresses:           { Hourglass: [null,null,null], Pear: [null,null,null], Apple: [null,null,null], Rectangle: [null,null,null], 'Inverted Triangle': [null,null,null] },
   Skirts:            { Hourglass: [null,null,null], Pear: [null,null,null], Apple: [null,null,null], Rectangle: [null,null,null], 'Inverted Triangle': [null,null,null] },
   Outerwear:         { Hourglass: [null,null,null], Pear: [null,null,null], Apple: [null,null,null], Rectangle: [null,null,null], 'Inverted Triangle': [null,null,null] },
