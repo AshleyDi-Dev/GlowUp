@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useRecommendations } from '../hooks/useRecommendations'
 import ImagePlaceholder from '../components/ImagePlaceholder'
-import BottomsPlaceholder from '../components/BottomsPlaceholder'
+import GarmentPlaceholder from '../components/GarmentPlaceholder'
 import styles from './Recommendations.module.css'
 
 // ── Chevron icon ──────────────────────────────────────────────────
@@ -109,10 +109,7 @@ function GarmentCard({ label, data, bodyType }) {
     <Card eyebrow="Clothing" title={label}>
       {data ? (
         <>
-          {label === 'Bottoms'
-            ? <BottomsPlaceholder bodyType={bodyType} />
-            : <ImagePlaceholder />
-          }
+          <GarmentPlaceholder category={label} bodyType={bodyType} />
           <ChipRow items={data.whatWorks} />
           <AvoidBlock items={data.avoid} />
         </>
@@ -123,12 +120,12 @@ function GarmentCard({ label, data, bodyType }) {
   )
 }
 
-function NecklinesCard({ necklines }) {
+function NecklinesCard({ necklines, bodyType }) {
   return (
     <Card eyebrow="Clothing" title="Necklines">
       {necklines ? (
         <>
-          <ImagePlaceholder />
+          <GarmentPlaceholder category="Necklines" bodyType={bodyType} />
           <ChipRow items={necklines} />
         </>
       ) : (
@@ -354,13 +351,13 @@ export default function Recommendations() {
         <div className={styles.groupSection}>
           <h2 className={styles.groupHeading}>Clothing</h2>
           <div className={styles.cardGrid}>
-            <GarmentCard  label="Tops"      data={garments?.tops}      />
-            <GarmentCard  label="Jackets"   data={garments?.jackets}   />
-            <GarmentCard  label="Bottoms"   data={garments?.bottoms}   bodyType={garments?.bodyType ?? styleSummary?.body_type} />
-            <GarmentCard  label="Dresses"   data={garments?.dresses}   />
-            <GarmentCard  label="Skirts"    data={garments?.skirts}    />
-            <GarmentCard  label="Outerwear" data={garments?.outerwear} />
-            <NecklinesCard necklines={garments?.necklines} />
+            <GarmentCard  label="Tops"      data={garments?.tops}      bodyType={styleSummary?.body_type} />
+            <GarmentCard  label="Jackets"   data={garments?.jackets}   bodyType={styleSummary?.body_type} />
+            <GarmentCard  label="Bottoms"   data={garments?.bottoms}   bodyType={styleSummary?.body_type} />
+            <GarmentCard  label="Dresses"   data={garments?.dresses}   bodyType={styleSummary?.body_type} />
+            <GarmentCard  label="Skirts"    data={garments?.skirts}    bodyType={styleSummary?.body_type} />
+            <GarmentCard  label="Outerwear" data={garments?.outerwear} bodyType={styleSummary?.body_type} />
+            <NecklinesCard necklines={garments?.necklines}              bodyType={styleSummary?.body_type} />
           </div>
         </div>
 
