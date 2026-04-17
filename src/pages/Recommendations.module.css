@@ -88,7 +88,8 @@
   box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: hidden; /* fallback for older browsers */
+  overflow: clip;   /* clip without creating a scroll container, so grid rows size correctly */
 }
 
 .cardHeader {
