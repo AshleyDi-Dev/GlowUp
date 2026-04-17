@@ -1,0 +1,18 @@
+/* ── App shell ───────────────────────────────── */
+
+.shell {
+  min-height: 100svh;
+}
+
+/* Mobile: content clears the bottom nav */
+.content {
+  padding-bottom: 60px;
+}
+
+/* Desktop: content clears the top nav */
+@media (min-width: 640px) {
+  .content {
+    padding-bottom: 0;
+    padding-top: 56px;
+  }
+}

@@ -167,6 +167,80 @@
   font-size: var(--text-caption);
 }
 
+/* ── Confidence badge ────────────────────────── */
+
+.confidence {
+  align-self: flex-start;
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-accent);
+  background: var(--color-accent-muted);
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-sm);
+}
+
+/* ── Full-width link wrapper ─────────────────── */
+
+.fullWidth {
+  width: 100%;
+}
+
+/* ── Retake / reset action blocks ────────────── */
+
+.retakeBlock {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  align-items: center;
+}
+
+.resetBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+}
+
+.actionNote {
+  font-size: var(--text-label);
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.resetConfirm {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  align-items: center;
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.resetConfirmText {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+  text-align: center;
+}
+
+/* ── Low confidence note ─────────────────────── */
+
+.lowConfidenceNote {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+  padding: var(--space-md);
+  background: var(--color-accent-muted);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
 /* ── Actions ─────────────────────────────────── */
 
 .resultActions {
@@ -208,7 +282,7 @@
   padding: 0;
 }
 
-.resetNote {
+.hairResetLink {
   font-size: var(--text-caption);
   color: var(--color-text-secondary);
   line-height: var(--line-height-body);
@@ -218,9 +292,11 @@
   cursor: pointer;
   font-family: var(--font-family);
   padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
-.resetNote:hover {
+.hairResetLink:hover {
   color: var(--color-text-primary);
 }
 
@@ -234,6 +310,19 @@
   border: 1px dashed var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-accent-muted);
+  opacity: 0.75;
+}
+
+.teaserLockRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.teaserLockIcon {
+  font-size: var(--text-label);
+  color: var(--color-text-tertiary, var(--color-text-secondary));
+  line-height: 1;
 }
 
 .teaserEyebrow {
@@ -241,14 +330,7 @@
   font-weight: var(--font-weight-medium);
   letter-spacing: var(--letter-spacing-wide);
   text-transform: uppercase;
-  color: var(--color-accent);
-}
-
-.teaserHeading {
-  font-size: var(--text-body);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-primary);
-  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-secondary);
 }
 
 .teaserBody {
@@ -256,4 +338,22 @@
   color: var(--color-text-secondary);
   line-height: var(--line-height-body);
   margin-bottom: var(--space-xs);
+}
+
+.teaserPreview {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+  filter: blur(3px);
+  user-select: none;
+  pointer-events: none;
+}
+
+.teaserPreviewPill {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full, 999px);
+  padding: 2px var(--space-sm);
 }

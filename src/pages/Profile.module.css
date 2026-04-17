@@ -1,0 +1,296 @@
+/* ── Page shell ──────────────────────────────── */
+
+.page {
+  min-height: 100svh;
+  padding: var(--space-xl) var(--space-md) var(--space-2xl);
+  background: var(--color-bg);
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+/* ── Sections grid ───────────────────────────── */
+
+.sectionsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+  align-items: stretch;
+}
+
+@media (min-width: 1024px) {
+  .sectionsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ── Page header ─────────────────────────────── */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding-bottom: var(--space-sm);
+}
+
+.eyebrow {
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.heading {
+  font-size: var(--text-heading);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+}
+
+/* ── Section card ────────────────────────────── */
+
+.sectionCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.sectionEyebrow {
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+/* ── Empty state ─────────────────────────────── */
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.emptyLabel {
+  font-size: var(--text-body);
+  color: var(--color-text-secondary);
+}
+
+.emptyAction {
+  text-decoration: none;
+  display: block;
+}
+
+/* ── Measurements grid ───────────────────────── */
+
+.measGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md) var(--space-lg);
+}
+
+.measCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.measLabel {
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.measValue {
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.measUpdated {
+  font-size: var(--text-label);
+  color: var(--color-text-secondary);
+  margin-top: calc(-1 * var(--space-xs));
+}
+
+.editLink {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  align-self: flex-start;
+}
+
+.editLink:hover {
+  color: var(--color-text-primary);
+}
+
+/* ── Result content ──────────────────────────── */
+
+.resultTitle {
+  font-size: var(--text-subheading);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+}
+
+.resultDesc {
+  font-size: var(--text-body);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+}
+
+/* ── Color section ───────────────────────────── */
+
+.colorSeason {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  margin-top: calc(-1 * var(--space-sm));
+}
+
+.paletteRow {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+}
+
+/* ── Card actions ────────────────────────────── */
+
+.cardActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding-top: var(--space-xs);
+}
+
+.fullWidth {
+  width: 100%;
+  display: block;
+  text-decoration: none;
+}
+
+/* ── Reset control ───────────────────────────── */
+
+.resetBlock {
+  display: flex;
+  justify-content: center;
+}
+
+.resetConfirm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  align-items: center;
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+}
+
+.resetConfirmText {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+  text-align: center;
+}
+
+/* ── Text link ───────────────────────────────── */
+
+.textLink {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-family);
+  padding: 0;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.textLink:hover {
+  color: var(--color-text-primary);
+}
+
+/* ── Style snapshot card ─────────────────────── */
+
+.snapshotCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.bulletList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: 0;
+}
+
+.bullet {
+  font-size: var(--text-body);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+  padding-left: var(--space-md);
+  position: relative;
+}
+
+.bullet::before {
+  content: '–';
+  position: absolute;
+  left: 0;
+  color: var(--color-text-secondary);
+}
+
+.snapshotActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+/* ── Actions bar (below grid) ────────────────── */
+
+.actionsBar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  align-self: stretch;
+}
+
+.comingSoon {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  padding: var(--space-xs) 0;
+}

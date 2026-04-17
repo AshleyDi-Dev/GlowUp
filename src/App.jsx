@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedLayout from './components/ProtectedLayout'
 import PublicOnlyRoute from './components/PublicOnlyRoute'
-import NavBar from './components/NavBar'
 
 import Welcome      from './pages/Welcome'
 import Login        from './pages/Login'
@@ -18,16 +17,16 @@ import Profile      from './pages/Profile'
 import Style        from './pages/Style'
 import OutfitBuilder from './pages/OutfitBuilder'
 import Saved        from './pages/Saved'
-import Measurements from './pages/Measurements'
-import Tokens       from './pages/Tokens'
+import ChoosePath   from './pages/ChoosePath'
+import Measurements      from './pages/Measurements'
+import Recommendations   from './pages/Recommendations'
+import Tokens            from './pages/Tokens'
 
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div style={{ paddingBottom: '60px' }}>
-          <NavBar />
-          <Routes>
+        <Routes>
           {/* Public */}
           <Route path="/" element={<Welcome />} />
           <Route path="/tokens" element={<Tokens />} />
@@ -41,6 +40,7 @@ export default function App() {
           {/* Protected — redirect to /login if not authenticated */}
           <Route element={<ProtectedLayout />}>
             <Route path="/onboarding"          element={<Onboarding />} />
+            <Route path="/choose-path"         element={<ChoosePath />} />
             <Route path="/home"                element={<Home />} />
             <Route path="/analyze"             element={<AnalyzeHub />} />
             <Route path="/analyze/body"        element={<BodyQuiz />} />
@@ -48,16 +48,16 @@ export default function App() {
             <Route path="/analyze/hair"        element={<HairQuiz />} />
             <Route path="/analyze/color"       element={<ColorQuiz />} />
             <Route path="/profile"             element={<Profile />} />
-            <Route path="/style"               element={<Style />} />
+            <Route path="/style"               element={<Recommendations />} />
             <Route path="/style/outfit-builder" element={<OutfitBuilder />} />
             <Route path="/saved"               element={<Saved />} />
             <Route path="/measurements"        element={<Measurements />} />
+            <Route path="/recommendations"    element={<Recommendations />} />
           </Route>
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-        </div>
       </BrowserRouter>
     </AuthProvider>
   )

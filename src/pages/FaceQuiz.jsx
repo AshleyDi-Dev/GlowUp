@@ -6,6 +6,7 @@ import QuizEngine from '../components/QuizEngine'
 import Button from '../components/Button'
 import { Q1Guide, Q5Guide } from '../components/FaceGuides'
 import styles from './BodyQuiz.module.css'
+import ImagePlaceholder from '../components/ImagePlaceholder'
 
 // ── Questions ────────────────────────────────────────────────────
 
@@ -140,7 +141,7 @@ const RESULTS = {
     whatThisMeans: [
       'V-necks, deep scoop necks, and open collars draw the eye downward and add the illusion of length — they tend to be especially flattering.',
       'Angular earrings — long drops, rectangles, and geometric shapes — add definition. Hoops and round studs can echo the roundness, so longer vertical styles tend to work better.',
-      'Rectangular or angular glasses frames add structure and contrast well with soft features. Side-swept fringes and long layers create flattering vertical lines.',
+      'Rectangular or angular glasses frames may add structure and contrast well with soft features. Side-swept fringes and long layers tend to create a flattering vertical line.',
     ],
   },
   Square: {
@@ -150,7 +151,7 @@ const RESULTS = {
     whatThisMeans: [
       'Round and oval necklines soften the jawline — scoop, U-necks, and off-shoulder styles all work well. Very square or boxy necklines can feel heavy when the jaw is already strong.',
       'Curved earrings — hoops, teardrop shapes, and round studs — complement the angular jaw naturally. Long, delicate drops also work by drawing the eye down.',
-      'Round and oval glasses frames soften the structure of the face. Layered haircuts that fall below the jaw add softness; blunt jaw-length cuts emphasise the angle.',
+      'Round and oval glasses frames may soften the structure of the face. Layered haircuts that fall below the jaw tend to add softness; blunt jaw-length cuts tend to emphasise the angle.',
     ],
   },
   Heart: {
@@ -160,7 +161,7 @@ const RESULTS = {
     whatThisMeans: [
       'Wider or off-shoulder necklines balance the broader forehead — sweetheart, boat, and wide scoop necks draw the eye down and outward effectively.',
       'Earrings that are wider at the bottom — chandelier styles, teardrop shapes, and fan drops — add visual weight below the jaw, which balances the forehead width.',
-      'Round and oval frames with slightly wider bottoms work well for glasses. Haircuts with volume below the ear — waves, layers from the chin down — complement the heart shape naturally.',
+      'Round and oval frames with slightly wider bottoms may work well for glasses. Haircuts with volume below the ear — waves, layers from the chin down — tend to complement the heart shape naturally.',
     ],
   },
   Oblong: {
@@ -179,10 +180,102 @@ const RESULTS = {
     description: "Your cheekbones are the standout feature — wide and prominent, with a narrow forehead and a tapered jaw below. The goal is usually to add width at the forehead and chin to balance the cheekbone width.",
     whatThisMeans: [
       'Wider necklines at forehead level — boat necks and straight-across necklines — help add width where the face is narrower and balance the cheekbone width.',
-      'Earrings that are wider at the top — studs, small hoops, and curved drops — add width at the forehead and jaw level. Avoid narrow drops that point straight down.',
+      'Earrings that are wider at the top — studs, small hoops, and curved drops — may add width at the forehead and jaw level. Narrow drops that point straight down can elongate rather than balance, so they may feel less harmonious.',
       'Rimless and oval frames that sit wide at the forehead work well. Haircuts with volume at the crown and jaw — layers, side-swept styles — balance the narrow top and bottom of the face.',
     ],
   },
+}
+
+// ── Result actions ────────────────────────────────────────────────
+
+function ResultActions({ onSave, onRetake, onReset, saving, saved, resetting, continueLink, continueLinkLabel }) {
+  const [confirmReset, setConfirmReset] = useState(false)
+
+  return (
+    <div className={styles.resultActions}>
+      {saved ? (
+        <p className={styles.savedConfirmation} role="status">
+          <span aria-hidden="true">✓</span> Result saved
+        </p>
+      ) : (
+        <Button fullWidth loading={saving} onClick={onSave}>
+          Save result
+        </Button>
+      )}
+
+      <Link to={continueLink} className={styles.fullWidth}>
+        <Button variant="ghost" fullWidth>{continueLinkLabel}</Button>
+      </Link>
+
+      <div className={styles.retakeBlock}>
+        <Button variant="ghost" fullWidth onClick={onRetake}>Retake quiz</Button>
+      </div>
+
+      {confirmReset ? (
+        <div className={styles.resetConfirm}>
+          <p className={styles.resetConfirmText}>
+            Resetting removes your current result so you can start this section fresh. Your previous results are never deleted.
+          </p>
+          <Button variant="destructive" fullWidth loading={resetting} onClick={onReset}>
+            Yes, reset this section
+          </Button>
+          <button type="button" className={styles.textLink} onClick={() => setConfirmReset(false)}>
+            Cancel
+          </button>
+        </div>
+      ) : (
+        <div className={styles.resetBlock}>
+          <button type="button" className={styles.textLink} onClick={() => setConfirmReset(true)}>
+            Reset this section
+          </button>
+        </div>
+      )}
+
+      <Link to="/analyze" className={styles.textLink}>
+        Back to Analyze
+      </Link>
+    </div>
+  )
+}
+
+function PreviousResultActions({ onRetake, onReset, resetting, continueLink, continueLinkLabel }) {
+  const [confirmReset, setConfirmReset] = useState(false)
+
+  return (
+    <div className={styles.resultActions}>
+      <Link to={continueLink} className={styles.fullWidth}>
+        <Button variant="ghost" fullWidth>{continueLinkLabel}</Button>
+      </Link>
+
+      <div className={styles.retakeBlock}>
+        <Button variant="ghost" fullWidth onClick={onRetake}>Retake quiz</Button>
+      </div>
+
+      {confirmReset ? (
+        <div className={styles.resetConfirm}>
+          <p className={styles.resetConfirmText}>
+            Resetting removes your current result so you can start this section fresh. Your previous results are never deleted.
+          </p>
+          <Button variant="destructive" fullWidth loading={resetting} onClick={onReset}>
+            Yes, reset this section
+          </Button>
+          <button type="button" className={styles.textLink} onClick={() => setConfirmReset(false)}>
+            Cancel
+          </button>
+        </div>
+      ) : (
+        <div className={styles.resetBlock}>
+          <button type="button" className={styles.textLink} onClick={() => setConfirmReset(true)}>
+            Reset this section
+          </button>
+        </div>
+      )}
+
+      <Link to="/analyze" className={styles.textLink}>
+        Back to Analyze
+      </Link>
+    </div>
+  )
 }
 
 // ── Intro screen ──────────────────────────────────────────────────
@@ -215,7 +308,7 @@ function IntroScreen({ onStart }) {
 
 // ── Result screen ─────────────────────────────────────────────────
 
-function ResultScreen({ resultType, confidence, onSave, onRetake, saving, saved }) {
+function ResultScreen({ resultType, confidence, onSave, onRetake, onReset, saving, saved, resetting }) {
   const result = RESULTS[resultType] ?? RESULTS.Oval
 
   return (
@@ -230,6 +323,8 @@ function ResultScreen({ resultType, confidence, onSave, onRetake, saving, saved 
           <p className={styles.resultDescription}>{result.description}</p>
         </div>
 
+        <ImagePlaceholder />
+
         <div className={styles.whatThisMeans}>
           <p className={styles.sectionHeading}>What this means</p>
           <ul className={styles.meansList}>
@@ -239,26 +334,16 @@ function ResultScreen({ resultType, confidence, onSave, onRetake, saving, saved 
           </ul>
         </div>
 
-        <div className={styles.resultActions}>
-          {saved ? (
-            <p className={styles.savedConfirmation} role="status">
-              <span aria-hidden="true">✓</span> Result saved
-            </p>
-          ) : (
-            <Button fullWidth loading={saving} onClick={onSave}>
-              Save result
-            </Button>
-          )}
-          <Link to="/analyze/hair" className={styles.fullWidth}>
-            <Button variant="ghost" fullWidth>Continue to hair quiz</Button>
-          </Link>
-          <button type="button" className={styles.textLink} onClick={onRetake}>
-            Retake quiz
-          </button>
-          <Link to="/analyze" className={styles.textLink}>
-            Back to Analyze
-          </Link>
-        </div>
+        <ResultActions
+          onSave={onSave}
+          onRetake={onRetake}
+          onReset={onReset}
+          saving={saving}
+          saved={saved}
+          resetting={resetting}
+          continueLink="/analyze/hair"
+          continueLinkLabel="Continue to hair quiz"
+        />
 
       </div>
     </div>
@@ -267,7 +352,7 @@ function ResultScreen({ resultType, confidence, onSave, onRetake, saving, saved 
 
 // ── Previous result screen ────────────────────────────────────────
 
-function PreviousResultScreen({ resultType, onRetake }) {
+function PreviousResultScreen({ resultType, onRetake, onReset, resetting }) {
   const result = RESULTS[resultType] ?? RESULTS.Oval
 
   return (
@@ -281,6 +366,8 @@ function PreviousResultScreen({ resultType, onRetake }) {
           <p className={styles.resultDescription}>{result.description}</p>
         </div>
 
+        <ImagePlaceholder />
+
         <div className={styles.whatThisMeans}>
           <p className={styles.sectionHeading}>What this means</p>
           <ul className={styles.meansList}>
@@ -290,17 +377,13 @@ function PreviousResultScreen({ resultType, onRetake }) {
           </ul>
         </div>
 
-        <div className={styles.resultActions}>
-          <Link to="/analyze/hair" className={styles.fullWidth}>
-            <Button variant="ghost" fullWidth>Continue to hair quiz</Button>
-          </Link>
-          <button type="button" className={styles.textLink} onClick={onRetake}>
-            Retake quiz
-          </button>
-          <Link to="/analyze" className={styles.textLink}>
-            Back to Analyze
-          </Link>
-        </div>
+        <PreviousResultActions
+          onRetake={onRetake}
+          onReset={onReset}
+          resetting={resetting}
+          continueLink="/analyze/hair"
+          continueLinkLabel="Continue to hair quiz"
+        />
 
       </div>
     </div>
@@ -314,12 +397,13 @@ export default function FaceQuiz() {
 
   const [loading, setLoading]         = useState(true)
   const [savedResult, setSavedResult] = useState(null)
-  const [newResult, setNewResult]     = useState(null)   // { type, confidence }
+  const [newResult, setNewResult]     = useState(null)
   const [newAnswers, setNewAnswers]   = useState(null)
   const [skipPrev, setSkipPrev]       = useState(false)
   const [quizStarted, setQuizStarted] = useState(false)
   const [saving, setSaving]           = useState(false)
   const [saved, setSaved]             = useState(false)
+  const [resetting, setResetting]     = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -344,6 +428,13 @@ export default function FaceQuiz() {
   async function handleSave() {
     setSaving(true)
 
+    await supabase
+      .from('quiz_attempts')
+      .update({ is_current: false })
+      .eq('user_id', user.id)
+      .eq('quiz_type', 'face')
+      .eq('is_current', true)
+
     const { error: attemptError } = await supabase.from('quiz_attempts').insert({
       user_id:      user.id,
       quiz_type:    'face',
@@ -351,7 +442,7 @@ export default function FaceQuiz() {
       result_json:  { type: newResult.type, confidence: newResult.confidence },
       is_current:   true,
     })
-    if (attemptError) console.error('[FaceQuiz] quiz_attempts error:', attemptError)
+    if (attemptError) { console.error('[FaceQuiz] quiz_attempts error:', attemptError); setSaving(false); return }
 
     const { error: summaryError } = await supabase.from('style_summary').upsert(
       { user_id: user.id, face_shape: newResult.type },
@@ -361,6 +452,29 @@ export default function FaceQuiz() {
 
     setSaving(false)
     setSaved(true)
+  }
+
+  async function handleReset() {
+    setResetting(true)
+
+    await supabase
+      .from('quiz_attempts')
+      .update({ is_current: false })
+      .eq('user_id', user.id)
+      .eq('quiz_type', 'face')
+
+    await supabase.from('style_summary').upsert(
+      { user_id: user.id, face_shape: null },
+      { onConflict: 'user_id' }
+    )
+
+    setSavedResult(null)
+    setNewResult(null)
+    setNewAnswers(null)
+    setSaved(false)
+    setSkipPrev(false)
+    setQuizStarted(false)
+    setResetting(false)
   }
 
   function handleRetakeFromResult() {
@@ -380,8 +494,10 @@ export default function FaceQuiz() {
         confidence={newResult.confidence}
         onSave={handleSave}
         onRetake={handleRetakeFromResult}
+        onReset={handleReset}
         saving={saving}
         saved={saved}
+        resetting={resetting}
       />
     )
   }
@@ -391,6 +507,8 @@ export default function FaceQuiz() {
       <PreviousResultScreen
         resultType={savedResult}
         onRetake={() => { setSkipPrev(true); setQuizStarted(false) }}
+        onReset={handleReset}
+        resetting={resetting}
       />
     )
   }

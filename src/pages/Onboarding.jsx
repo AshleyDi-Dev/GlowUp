@@ -5,26 +5,22 @@ import { useAuth } from '../context/AuthContext'
 import Button from '../components/Button'
 import styles from './Onboarding.module.css'
 
-const FEATURES = [
+const STEPS = [
   {
-    icon: '◎',
-    label: 'Understand your features',
-    description: 'Body, face, hair, and color analysis — all in one place.',
+    label:   'Understand your features',
+    support: 'Body, face, hair, and color analysis tailored to you',
   },
   {
-    icon: '◻',
-    label: 'Save your measurements and style profile',
-    description: 'Everything you know about yourself, stored and ready to use.',
+    label:   'Save your measurements and style profile',
+    support: 'Everything in one place, updated whenever you need',
   },
   {
-    icon: '▦',
-    label: 'Get outfit formulas based on your shape and colors',
-    description: 'Practical guidance, not mood boards — clothes that actually work for you.',
+    label:   'Get outfit formulas based on shapes and colors',
+    support: 'Practical combinations, not overwhelming product lists',
   },
   {
-    icon: '↺',
-    label: 'Retake sections anytime as you change',
-    description: 'Your profile grows with you — nothing is set in stone.',
+    label:   'Retake sections anytime as you change',
+    support: 'Your profile evolves with you',
   },
 ]
 
@@ -34,7 +30,6 @@ export default function Onboarding() {
   const [checking, setChecking] = useState(true)
   const [saving, setSaving]     = useState(false)
 
-  // Redirect if already onboarded
   useEffect(() => {
     async function check() {
       const { data } = await supabase
@@ -49,18 +44,15 @@ export default function Onboarding() {
         setChecking(false)
       }
     }
-
     check()
   }, [user.id, navigate])
 
   async function handleStart() {
     setSaving(true)
-
     await supabase
       .from('profiles')
       .upsert({ id: user.id, has_onboarded: true }, { onConflict: 'id' })
-
-    navigate('/home', { replace: true })
+    navigate('/choose-path', { replace: true })
   }
 
   if (checking) return null
@@ -69,18 +61,20 @@ export default function Onboarding() {
     <div className={styles.page}>
       <div className={styles.container}>
 
-        <div className={styles.pageHeader}>
-          <p className={styles.wordmark}>Forme</p>
-          <h1 className={styles.heading}>Your style profile starts here.</h1>
+        <div className={styles.header}>
+          <p className={styles.eyebrow}>Forme</p>
+          <h1 className={styles.heading}>Here's what you can do</h1>
         </div>
 
-        <ol className={styles.featureList}>
-          {FEATURES.map(({ icon, label, description }, i) => (
-            <li key={i} className={styles.featureCard}>
-              <span className={styles.featureIcon} aria-hidden="true">{icon}</span>
-              <div className={styles.featureText}>
-                <p className={styles.featureLabel}>{label}</p>
-                <p className={styles.featureDescription}>{description}</p>
+        <ol className={styles.stepList}>
+          {STEPS.map(({ label, support }, i) => (
+            <li key={i} className={styles.step}>
+              <span className={styles.stepNumber} aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <div className={styles.stepText}>
+                <p className={styles.stepLabel}>{label}</p>
+                <p className={styles.stepSupport}>{support}</p>
               </div>
             </li>
           ))}

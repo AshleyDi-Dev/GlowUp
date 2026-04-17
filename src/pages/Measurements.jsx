@@ -1,47 +1,59 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import Button from '../components/Button'
-import TextInput from '../components/TextInput'
 import Card from '../components/Card'
 import styles from './Measurements.module.css'
 
-// Conversion helpers
-const CM_TO_IN = 0.393701
-const IN_TO_CM = 2.54
+// ── Conversion helpers ────────────────────────────────────────────
+
+const CM_TO_IN   = 0.393701
+const IN_TO_CM   = 2.54
+const KG_TO_LBS  = 2.20462
+const LBS_TO_KG  = 0.453592
 
 function round1(n) {
   return Math.round(n * 10) / 10
 }
 
+// These fields skip length conversion
+const SKIP_LINEAR = new Set(['shoe_size', 'bra_size'])
+// These convert as mass (kg ↔ lbs) when unit toggles
+const MASS_FIELDS = new Set(['weight'])
+
 function convertFields(fields, toUnit) {
   const result = {}
   Object.entries(fields).forEach(([key, val]) => {
-    if (key === 'shoe_size' || val === '') {
-      result[key] = val
-      return
-    }
+    if (SKIP_LINEAR.has(key) || val === '') { result[key] = val; return }
     const n = parseFloat(val)
-    if (isNaN(n)) {
-      result[key] = val
-      return
+    if (isNaN(n)) { result[key] = val; return }
+
+    if (MASS_FIELDS.has(key)) {
+      result[key] = toUnit === 'in'
+        ? String(round1(n * KG_TO_LBS))
+        : String(round1(n * LBS_TO_KG))
+    } else {
+      result[key] = toUnit === 'in'
+        ? String(round1(n * CM_TO_IN))
+        : String(round1(n * IN_TO_CM))
     }
-    result[key] = toUnit === 'in'
-      ? String(round1(n * CM_TO_IN))
-      : String(round1(n * IN_TO_CM))
   })
   return result
 }
 
+// ── Field config ──────────────────────────────────────────────────
+
 const EMPTY = {
-  height:          '',
-  bust:            '',
-  waist:           '',
-  hips:            '',
-  inseam:          '',
-  shoulder_width:  '',
-  shoe_size:       '',
+  height:         '',
+  bust:           '',
+  waist:          '',
+  hips:           '',
+  inseam:         '',
+  shoulder_width: '',
+  shoe_size:      '',
+  bra_size:       '',
+  weight:         '',
 }
 
 const SECTIONS = [
@@ -49,21 +61,23 @@ const SECTIONS = [
     label: 'Upper body',
     fields: [
       {
-        key: 'height',
-        label: 'Height',
-        helper: cm => cm
-          ? 'Stand straight against a wall, measure from floor to top of head.'
-          : 'Stand straight against a wall, measure from floor to top of head.',
+        key:    'bust',
+        label:  'Bust',
+        helper: 'Measure around the fullest part of your chest, keeping the tape level.',
       },
       {
-        key: 'bust',
-        label: 'Bust',
-        helper: () => 'Measure around the fullest part of your chest, keeping the tape level.',
+        key:    'shoulder_width',
+        label:  'Shoulder width',
+        helper: 'Measure from the edge of one shoulder across to the other.',
       },
       {
-        key: 'shoulder_width',
-        label: 'Shoulder width',
-        helper: () => 'Measure from the edge of one shoulder across to the other.',
+        key:         'bra_size',
+        label:       'Bra size',
+        helper:      'Enter your band size and cup — e.g. 34B or 10C.',
+        optional:    true,
+        sensitive:   true,
+        note:        'Optional — used for fit reference only',
+        skipConvert: true,
       },
     ],
   },
@@ -71,46 +85,124 @@ const SECTIONS = [
     label: 'Lower body',
     fields: [
       {
-        key: 'waist',
-        label: 'Waist',
-        helper: () => 'Measure around your natural waist — the narrowest part of your torso.',
+        key:    'waist',
+        label:  'Waist',
+        helper: 'Measure around your natural waist — the narrowest part of your torso.',
       },
       {
-        key: 'hips',
-        label: 'Hips',
-        helper: () => 'Measure around the fullest part of your hips and seat.',
+        key:    'hips',
+        label:  'Hips',
+        helper: 'Measure around the fullest part of your hips and seat.',
       },
       {
-        key: 'inseam',
-        label: 'Inseam',
-        helper: () => 'Measure from the crotch seam down to the ankle along the inner leg.',
+        key:    'inseam',
+        label:  'Inseam',
+        helper: 'Measure from the crotch seam down to the ankle along the inner leg.',
       },
     ],
   },
   {
-    label: 'Other',
+    label: 'General',
     fields: [
       {
-        key: 'shoe_size',
-        label: 'Shoe size',
-        helper: () => 'Enter your standard shoe size (e.g. 8, 8.5, 39).',
+        key:    'height',
+        label:  'Height',
+        helper: 'Stand straight against a wall, measure from floor to top of head.',
+      },
+      {
+        key:         'shoe_size',
+        label:       'Shoe size',
+        helper:      'Enter your standard size — e.g. 8, 8.5, or 39.',
+        skipConvert: true,
+      },
+      {
+        key:       'weight',
+        label:     'Weight',
+        helper:    (unit) => unit === 'cm' ? 'Enter in kg.' : 'Enter in lbs.',
+        optional:  true,
+        sensitive: true,
+        note:      'Optional — never used for judgment, only for fit calculations if helpful',
       },
     ],
   },
 ]
 
-export default function Measurements() {
-  const { user } = useAuth()
-  const navigate = useNavigate()
+// ── Field component ───────────────────────────────────────────────
 
-  const [unit, setUnit]       = useState('cm')
-  const [fields, setFields]   = useState(EMPTY)
-  const [loading, setLoading] = useState(true)
+function MeasurementField({ field, value, unit, onChange }) {
+  const { key, label, helper, optional, sensitive, note, skipConvert } = field
+  const helperText = typeof helper === 'function' ? helper(unit) : helper
+  const inputId    = `mf-${key}`
+
+  return (
+    <div className={styles.fieldRow}>
+      <div className={styles.fieldLabelRow}>
+        <label
+          htmlFor={inputId}
+          className={[
+            styles.fieldLabel,
+            sensitive ? styles.fieldLabelMuted : '',
+          ].filter(Boolean).join(' ')}
+        >
+          {label}
+        </label>
+        {optional && (
+          <span className={styles.optionalTag}>Optional</span>
+        )}
+      </div>
+
+      <input
+        id={inputId}
+        type={skipConvert ? 'text' : 'number'}
+        inputMode="decimal"
+        min="0"
+        step="0.1"
+        placeholder={skipConvert ? '' : unit}
+        value={value}
+        onChange={e => onChange(key, e.target.value)}
+        className={styles.input}
+      />
+
+      <p className={styles.helper}>{helperText}</p>
+
+      {note && (
+        <p className={styles.sensitiveNote}>{note}</p>
+      )}
+    </div>
+  )
+}
+
+// ── Date format ───────────────────────────────────────────────────
+
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+]
+
+function formatTimestamp(iso) {
+  if (!iso) return null
+  const d = new Date(iso)
+  return `${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`
+}
+
+// ── Page ──────────────────────────────────────────────────────────
+
+export default function Measurements() {
+  const { user }       = useAuth()
+  const navigate       = useNavigate()
+  const [searchParams] = useSearchParams()
+
+  const fromProfile = searchParams.get('from') === 'profile'
+  const exitPath    = fromProfile ? '/profile' : '/home'
+
+  const [unit, setUnit]           = useState('cm')
+  const [fields, setFields]       = useState(EMPTY)
+  const [loading, setLoading]     = useState(true)
+  const [updatedAt, setUpdatedAt] = useState(null)
   const [saving, setSaving]       = useState(false)
   const [saved, setSaved]         = useState(false)
   const [saveError, setSaveError] = useState('')
 
-  // Load existing measurements on mount
   useEffect(() => {
     async function load() {
       const { data, error } = await supabase
@@ -119,10 +211,11 @@ export default function Measurements() {
         .eq('user_id', user.id)
         .maybeSingle()
 
-      if (error) console.error('[Measurements] load error:', error)
+      if (error) console.error('[Measurements] load:', error)
 
       if (!error && data) {
         setUnit(data.unit ?? 'cm')
+        setUpdatedAt(data.updated_at ?? data.created_at ?? null)
         setFields({
           height:         String(data.height         ?? ''),
           bust:           String(data.bust           ?? ''),
@@ -131,20 +224,19 @@ export default function Measurements() {
           inseam:         String(data.inseam         ?? ''),
           shoulder_width: String(data.shoulder_width ?? ''),
           shoe_size:      String(data.shoe_size      ?? ''),
+          bra_size:       String(data.bra_size       ?? ''),
+          weight:         String(data.weight         ?? ''),
         })
       }
 
       setLoading(false)
     }
-
     load()
   }, [user.id])
 
   function handleUnitToggle(newUnit) {
     if (newUnit === unit) return
-    // Convert any filled-in numeric fields
-    const converted = convertFields(fields, newUnit)
-    setFields(converted)
+    setFields(prev => convertFields(prev, newUnit))
     setUnit(newUnit)
   }
 
@@ -156,96 +248,90 @@ export default function Measurements() {
     setSaveError('')
     setSaving(true)
 
-    // Build the row — store empty strings as null, numbers as numbers
+    const num = v => v !== '' ? parseFloat(v) : null
+    const str = v => v !== '' ? v             : null
+
     const row = {
-      user_id: user.id,
+      user_id:        user.id,
       unit,
-      height:         fields.height         !== '' ? parseFloat(fields.height)         : null,
-      bust:           fields.bust           !== '' ? parseFloat(fields.bust)           : null,
-      waist:          fields.waist          !== '' ? parseFloat(fields.waist)          : null,
-      hips:           fields.hips           !== '' ? parseFloat(fields.hips)           : null,
-      inseam:         fields.inseam         !== '' ? parseFloat(fields.inseam)         : null,
-      shoulder_width: fields.shoulder_width !== '' ? parseFloat(fields.shoulder_width) : null,
-      shoe_size:      fields.shoe_size      !== '' ? fields.shoe_size                  : null,
+      height:         num(fields.height),
+      bust:           num(fields.bust),
+      waist:          num(fields.waist),
+      hips:           num(fields.hips),
+      inseam:         num(fields.inseam),
+      shoulder_width: num(fields.shoulder_width),
+      shoe_size:      str(fields.shoe_size),
+      bra_size:       str(fields.bra_size),
+      weight:         num(fields.weight),
     }
 
-    console.log('[Measurements] saving row:', row)
-
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('measurements')
       .upsert(row, { onConflict: 'user_id' })
-      .select()
 
     setSaving(false)
 
     if (error) {
-      console.error('[Measurements] upsert error:', {
-        message: error.message,
-        code:    error.code,
-        details: error.details,
-        hint:    error.hint,
-      })
-      setSaveError(`Error: ${error.message}`)
+      console.error('[Measurements] upsert:', error)
+      setSaveError(`Couldn't save — ${error.message}`)
       return
     }
 
-    console.log('[Measurements] saved successfully:', data)
-
     setSaved(true)
-    setTimeout(() => navigate('/home'), 1500)
+    setTimeout(() => navigate(exitPath), 1500)
   }
 
   if (loading) return null
+
+  const heading   = fromProfile ? 'Edit your measurements' : 'Your measurements'
+  const skipLabel = fromProfile ? 'Cancel' : 'Skip for now'
 
   return (
     <div className={styles.page}>
       <div className={styles.container}>
 
         <div className={styles.pageHeader}>
-          <h1 className={styles.heading}>Your measurements</h1>
+          <h1 className={styles.heading}>{heading}</h1>
           <p className={styles.subheading}>
-            All fields are optional. Add what you know — you can always update these later.
+            Add what you know — all fields are optional and you can update them anytime.
           </p>
+          {updatedAt && (
+            <p className={styles.lastUpdated}>
+              Last updated {formatTimestamp(updatedAt)}
+            </p>
+          )}
         </div>
 
-        {/* Unit toggle */}
         <div className={styles.unitToggle} role="group" aria-label="Unit system">
           <button
             type="button"
-            className={`${styles.unitBtn} ${unit === 'cm' ? styles.unitActive : ''}`}
+            className={[styles.unitBtn, unit === 'cm' ? styles.unitActive : ''].filter(Boolean).join(' ')}
             onClick={() => handleUnitToggle('cm')}
           >
             cm
           </button>
           <button
             type="button"
-            className={`${styles.unitBtn} ${unit === 'in' ? styles.unitActive : ''}`}
+            className={[styles.unitBtn, unit === 'in' ? styles.unitActive : ''].filter(Boolean).join(' ')}
             onClick={() => handleUnitToggle('in')}
           >
             inches
           </button>
         </div>
 
-        {/* Field sections */}
         {SECTIONS.map(section => (
           <div key={section.label} className={styles.section}>
             <p className={styles.sectionLabel}>{section.label}</p>
             <Card padding="lg">
               <div className={styles.fieldStack}>
-                {section.fields.map(({ key, label, helper }) => (
-                  <div key={key} className={styles.fieldRow}>
-                    <TextInput
-                      label={label}
-                      type={key === 'shoe_size' ? 'text' : 'number'}
-                      inputMode={key === 'shoe_size' ? 'decimal' : 'decimal'}
-                      min="0"
-                      step="0.1"
-                      placeholder={key === 'shoe_size' ? 'e.g. 8 or 39' : unit}
-                      value={fields[key]}
-                      onChange={e => handleChange(key, e.target.value)}
-                    />
-                    <p className={styles.helper}>{helper(unit === 'cm')}</p>
-                  </div>
+                {section.fields.map(field => (
+                  <MeasurementField
+                    key={field.key}
+                    field={field}
+                    value={fields[field.key]}
+                    unit={unit}
+                    onChange={handleChange}
+                  />
                 ))}
               </div>
             </Card>
@@ -259,20 +345,36 @@ export default function Measurements() {
         <div className={styles.actions}>
           {saved ? (
             <p className={styles.savedConfirmation} role="status">
-              <span className={styles.savedCheck} aria-hidden="true">✓</span>
+              <svg
+                className={styles.savedIcon}
+                width="18"
+                height="18"
+                viewBox="0 0 18 18"
+                fill="none"
+                aria-hidden="true"
+              >
+                <circle cx="9" cy="9" r="8" stroke="currentColor" strokeWidth="1.25" />
+                <polyline
+                  points="5,9.5 7.5,12 13,6"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
               Measurements saved
             </p>
           ) : (
             <>
               <Button fullWidth loading={saving} onClick={handleSave}>
-                Save measurements
+                Save and continue
               </Button>
               <Button
                 variant="ghost"
                 fullWidth
-                onClick={() => navigate('/home')}
+                onClick={() => navigate(exitPath)}
               >
-                Skip for now
+                {skipLabel}
               </Button>
             </>
           )}

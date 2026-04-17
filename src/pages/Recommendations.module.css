@@ -1,0 +1,397 @@
+/* ── Page shell ──────────────────────────────── */
+
+.page {
+  min-height: 100svh;
+  padding: var(--space-xl) var(--space-md) var(--space-2xl);
+  background: var(--color-bg);
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+/* ── Page header ─────────────────────────────── */
+
+.pageHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding-bottom: var(--space-sm);
+}
+
+.pageEyebrow {
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.pageHeading {
+  font-size: var(--text-heading);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+}
+
+.pageSubheading {
+  font-size: var(--text-body);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+}
+
+/* ── Group sections ──────────────────────────── */
+
+.groupSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.groupHeading {
+  font-size: var(--text-subheading);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+}
+
+/* ── Card grid ───────────────────────────────── */
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .cardGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ── Section card (accordion) ────────────────── */
+
+.section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  background: none;
+  border: none;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
+  font-family: var(--font-family);
+  text-align: left;
+  width: 100%;
+  transition: background 120ms ease;
+}
+
+.cardHeader:hover {
+  background: var(--color-bg);
+}
+
+.cardHeaderOpen {
+  border-bottom-color: var(--color-border);
+}
+
+.cardHeaderText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.cardChevron {
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+  transition: transform 200ms ease;
+}
+
+.cardChevronOpen {
+  transform: rotate(180deg);
+}
+
+.cardBody {
+  padding: var(--space-md) var(--space-lg) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* ── Card text elements ──────────────────────── */
+
+.sectionEyebrow {
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.sectionTitle {
+  font-size: var(--text-subheading);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+}
+
+/* ── Labelled group ──────────────────────────── */
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.groupLabel {
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+/* ── Chips ───────────────────────────────────── */
+
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-family);
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 100px;
+  padding: var(--space-xs) var(--space-sm);
+  line-height: var(--line-height-tight);
+}
+
+/* ── Why paragraph ───────────────────────────── */
+
+.whyText {
+  font-size: var(--text-body);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+}
+
+/* ── Pattern / routine note ──────────────────── */
+
+.patternNote {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+  font-style: italic;
+}
+
+/* ── Avoid block ─────────────────────────────── */
+
+.avoidBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding-left: var(--space-sm);
+  border-left: 2px solid var(--color-border);
+}
+
+.avoidLabel {
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  opacity: 0.7;
+}
+
+.avoidList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.avoidItem {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+  opacity: 0.8;
+}
+
+/* ── Avoid inline (used in accessories) ─────── */
+
+.avoidInline {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 4px;
+  padding-left: var(--space-sm);
+  border-left: 2px solid var(--color-border);
+}
+
+.avoidInlineText {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+  opacity: 0.8;
+}
+
+/* ── Colour swatches ─────────────────────────── */
+
+.swatchGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.swatchItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 60px;
+}
+
+.swatchColor {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+}
+
+.swatchItemSm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 52px;
+}
+
+.swatchColorSm {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+}
+
+.swatchName {
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  text-align: center;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+/* ── Upgrade teaser ──────────────────────────── */
+
+.teaser {
+  background: var(--color-accent-muted);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.teaserText {
+  font-size: var(--text-caption);
+  color: var(--color-accent);
+  line-height: var(--line-height-body);
+}
+
+/* ── Empty section ───────────────────────────── */
+
+.emptySection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  align-items: flex-start;
+}
+
+.emptyText {
+  font-size: var(--text-body);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+}
+
+.emptyLink {
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-accent);
+  padding-bottom: 1px;
+}
+
+.emptyLink:hover {
+  opacity: 0.75;
+}
+
+/* ── Coming soon card ────────────────────────── */
+
+.comingSoonCard {
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.comingSoonEyebrow {
+  font-size: var(--text-label);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  opacity: 0.6;
+}
+
+.comingSoonTitle {
+  font-size: var(--text-subheading);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-secondary);
+}
+
+.comingSoonBody {
+  font-size: var(--text-body);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-body);
+  opacity: 0.7;
+}
+
+/* ── Error ───────────────────────────────────── */
+
+.errorText {
+  font-size: var(--text-body);
+  color: var(--color-error);
+  line-height: var(--line-height-body);
+}

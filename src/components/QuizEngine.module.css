@@ -132,6 +132,28 @@
   gap: var(--space-sm);
 }
 
+/* ── Escape hatch ────────────────────────────── */
+
+.escapeDivider {
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  text-align: center;
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  margin: var(--space-xs) 0;
+  opacity: 0.6;
+}
+
+.escapeCard {
+  opacity: 0.6;
+  transition: opacity 150ms ease, border-color 150ms ease, background 150ms ease, box-shadow 150ms ease;
+}
+
+.escapeCard:hover,
+.escapeCard[aria-pressed="true"] {
+  opacity: 1;
+}
+
 /* ── Navigation ──────────────────────────────── */
 
 .nav {

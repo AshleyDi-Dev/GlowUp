@@ -1,0 +1,176 @@
+/* ── Coming soon dot ─────────────────────────── */
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════
+   DESKTOP — top navigation bar
+   Visible above 640px
+   ══════════════════════════════════════════════ */
+
+.topBar {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .topBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    padding: 0 var(--space-xl);
+    z-index: 100;
+  }
+}
+
+.topNav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.topTab {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--color-text-secondary);
+  transition: color 150ms ease, background 150ms ease;
+  position: relative;
+}
+
+.topTab:hover {
+  color: var(--color-text-primary);
+  background: var(--color-bg);
+}
+
+.topTabActive {
+  color: var(--color-accent);
+}
+
+.topTabActive:hover {
+  color: var(--color-accent);
+  background: var(--color-accent-muted);
+}
+
+.topTabLabel {
+  font-size: var(--text-caption);
+  font-weight: var(--font-weight-medium);
+}
+
+.topLogout {
+  font-family: var(--font-family);
+  font-size: var(--text-caption);
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  transition: color 150ms ease;
+}
+
+.topLogout:hover {
+  color: var(--color-text-primary);
+}
+
+/* ══════════════════════════════════════════════
+   MOBILE — bottom navigation bar
+   Visible below 640px
+   ══════════════════════════════════════════════ */
+
+.bottomBar {
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  z-index: 100;
+}
+
+@media (min-width: 640px) {
+  .bottomBar {
+    display: none;
+  }
+}
+
+.bottomTab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  text-decoration: none;
+  color: var(--color-text-secondary);
+  transition: color 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bottomTabActive {
+  color: var(--color-accent);
+}
+
+.iconWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconWrap .dot {
+  position: absolute;
+  top: -1px;
+  right: -4px;
+}
+
+.bottomTabLabel {
+  font-size: 10px;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+/* ── Mobile logout — fixed top-right ─────────── */
+
+.mobileLogout {
+  display: block;
+  position: fixed;
+  top: var(--space-sm);
+  right: var(--space-md);
+  font-family: var(--font-family);
+  font-size: var(--text-label);
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-xs) var(--space-sm);
+  z-index: 101;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobileLogout:hover {
+  color: var(--color-text-primary);
+}
+
+@media (min-width: 640px) {
+  .mobileLogout {
+    display: none;
+  }
+}

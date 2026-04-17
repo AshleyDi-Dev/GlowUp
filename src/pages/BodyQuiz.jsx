@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import QuizEngine from '../components/QuizEngine'
 import Button from '../components/Button'
 import styles from './BodyQuiz.module.css'
+import ImagePlaceholder from '../components/ImagePlaceholder'
 
 // ── Questions ────────────────────────────────────────────────────
 
@@ -167,7 +168,7 @@ const RESULTS = {
     whatThisMeans: [
       'Adding volume or detail to your lower half — wide-leg trousers, full skirts, pleats — helps bring your proportions into balance.',
       "V-necks and raglan sleeves soften the shoulder line, while boat necks and structured blazers emphasise it.",
-      "Your legs are typically a strong feature — don't be afraid to show them off.",
+      "Your legs tend to be a strong feature — styles that show them off, like shorter hemlines or tailored trousers, can be worth exploring.",
     ],
   },
   Rectangle: {
@@ -185,11 +186,103 @@ const RESULTS = {
     description: 'You carry weight through your midsection and torso, with slimmer legs and arms. The goal is usually to elongate the middle and draw attention to your stronger points — your legs, décolletage, or shoulders. Empire waists, wrap tops, and monochromatic looks tend to be the most flattering.',
     summary:     'Your proportions are midsection-dominant — you carry more volume through the torso with slimmer arms and legs.',
     whatThisMeans: [
-      "Drawing attention to your legs, shoulders, or décolletage shifts the focus naturally — don't underestimate how well these work for you.",
+      "Drawing attention to your legs, shoulders, or décolletage may shift the focus naturally — these areas can be strong features worth highlighting.",
       'Empire waists, wrap styles, and anything that flows over the midsection rather than clinging tend to be more comfortable and flattering.',
       'Monochromatic dressing — one colour head to toe — creates an elongating effect that works especially well for your proportions.',
     ],
   },
+}
+
+// ── Result actions ────────────────────────────────────────────────
+
+function ResultActions({ onSave, onRetake, onReset, saving, saved, resetting, continueLink, continueLinkLabel }) {
+  const [confirmReset, setConfirmReset] = useState(false)
+
+  return (
+    <div className={styles.resultActions}>
+      {saved ? (
+        <p className={styles.savedConfirmation} role="status">
+          <span aria-hidden="true">✓</span> Result saved
+        </p>
+      ) : (
+        <Button fullWidth loading={saving} onClick={onSave}>
+          Save result
+        </Button>
+      )}
+
+      <Link to={continueLink} className={styles.fullWidth}>
+        <Button variant="ghost" fullWidth>{continueLinkLabel}</Button>
+      </Link>
+
+      <div className={styles.retakeBlock}>
+        <Button variant="ghost" fullWidth onClick={onRetake}>Retake quiz</Button>
+      </div>
+
+      {confirmReset ? (
+        <div className={styles.resetConfirm}>
+          <p className={styles.resetConfirmText}>
+            Resetting removes your current result so you can start this section fresh. Your previous results are never deleted.
+          </p>
+          <Button variant="destructive" fullWidth loading={resetting} onClick={onReset}>
+            Yes, reset this section
+          </Button>
+          <button type="button" className={styles.textLink} onClick={() => setConfirmReset(false)}>
+            Cancel
+          </button>
+        </div>
+      ) : (
+        <div className={styles.resetBlock}>
+          <button type="button" className={styles.textLink} onClick={() => setConfirmReset(true)}>
+            Reset this section
+          </button>
+        </div>
+      )}
+
+      <Link to="/analyze" className={styles.textLink}>
+        Back to Analyze
+      </Link>
+    </div>
+  )
+}
+
+function PreviousResultActions({ onRetake, onReset, resetting, continueLink, continueLinkLabel }) {
+  const [confirmReset, setConfirmReset] = useState(false)
+
+  return (
+    <div className={styles.resultActions}>
+      <Link to={continueLink} className={styles.fullWidth}>
+        <Button variant="ghost" fullWidth>{continueLinkLabel}</Button>
+      </Link>
+
+      <div className={styles.retakeBlock}>
+        <Button variant="ghost" fullWidth onClick={onRetake}>Retake quiz</Button>
+      </div>
+
+      {confirmReset ? (
+        <div className={styles.resetConfirm}>
+          <p className={styles.resetConfirmText}>
+            Resetting removes your current result so you can start this section fresh. Your previous results are never deleted.
+          </p>
+          <Button variant="destructive" fullWidth loading={resetting} onClick={onReset}>
+            Yes, reset this section
+          </Button>
+          <button type="button" className={styles.textLink} onClick={() => setConfirmReset(false)}>
+            Cancel
+          </button>
+        </div>
+      ) : (
+        <div className={styles.resetBlock}>
+          <button type="button" className={styles.textLink} onClick={() => setConfirmReset(true)}>
+            Reset this section
+          </button>
+        </div>
+      )}
+
+      <Link to="/analyze" className={styles.textLink}>
+        Back to Analyze
+      </Link>
+    </div>
+  )
 }
 
 // ── Intro screen ──────────────────────────────────────────────────
@@ -224,7 +317,7 @@ function IntroScreen({ onStart }) {
 
 // ── Result screen ─────────────────────────────────────────────────
 
-function ResultScreen({ resultType, confidence, onSave, onRetake, saving, saved }) {
+function ResultScreen({ resultType, confidence, onSave, onRetake, onReset, saving, saved, resetting }) {
   const result = RESULTS[resultType] ?? RESULTS.Rectangle
 
   return (
@@ -239,6 +332,8 @@ function ResultScreen({ resultType, confidence, onSave, onRetake, saving, saved 
           <p className={styles.resultDescription}>{result.description}</p>
         </div>
 
+        <ImagePlaceholder result={result.label} />
+
         <div className={styles.whatThisMeans}>
           <p className={styles.sectionHeading}>What this means</p>
           <ul className={styles.meansList}>
@@ -248,28 +343,16 @@ function ResultScreen({ resultType, confidence, onSave, onRetake, saving, saved 
           </ul>
         </div>
 
-        <div className={styles.resultActions}>
-          {saved ? (
-            <p className={styles.savedConfirmation} role="status">
-              <span aria-hidden="true">✓</span> Result saved
-            </p>
-          ) : (
-            <Button fullWidth loading={saving} onClick={onSave}>
-              Save result
-            </Button>
-          )}
-          <Link to="/analyze/face" className={styles.fullWidth}>
-            <Button variant="ghost" fullWidth>
-              Continue to face quiz
-            </Button>
-          </Link>
-          <button type="button" className={styles.textLink} onClick={onRetake}>
-            Retake quiz
-          </button>
-          <Link to="/analyze" className={styles.textLink}>
-            Back to Analyze
-          </Link>
-        </div>
+        <ResultActions
+          onSave={onSave}
+          onRetake={onRetake}
+          onReset={onReset}
+          saving={saving}
+          saved={saved}
+          resetting={resetting}
+          continueLink="/analyze/face"
+          continueLinkLabel="Continue to face quiz"
+        />
 
       </div>
     </div>
@@ -278,7 +361,7 @@ function ResultScreen({ resultType, confidence, onSave, onRetake, saving, saved 
 
 // ── Previous result screen ────────────────────────────────────────
 
-function PreviousResultScreen({ resultType, onRetake }) {
+function PreviousResultScreen({ resultType, onRetake, onReset, resetting }) {
   const result = RESULTS[resultType] ?? RESULTS.Rectangle
 
   return (
@@ -292,6 +375,8 @@ function PreviousResultScreen({ resultType, onRetake }) {
           <p className={styles.resultDescription}>{result.description}</p>
         </div>
 
+        <ImagePlaceholder result={result.label} />
+
         <div className={styles.whatThisMeans}>
           <p className={styles.sectionHeading}>What this means</p>
           <ul className={styles.meansList}>
@@ -301,19 +386,13 @@ function PreviousResultScreen({ resultType, onRetake }) {
           </ul>
         </div>
 
-        <div className={styles.resultActions}>
-          <Link to="/analyze/face" className={styles.fullWidth}>
-            <Button variant="ghost" fullWidth>
-              Continue to face quiz
-            </Button>
-          </Link>
-          <button type="button" className={styles.textLink} onClick={onRetake}>
-            Retake quiz
-          </button>
-          <Link to="/analyze" className={styles.textLink}>
-            Back to Analyze
-          </Link>
-        </div>
+        <PreviousResultActions
+          onRetake={onRetake}
+          onReset={onReset}
+          resetting={resetting}
+          continueLink="/analyze/face"
+          continueLinkLabel="Continue to face quiz"
+        />
 
       </div>
     </div>
@@ -333,6 +412,7 @@ export default function BodyQuiz() {
   const [quizStarted, setQuizStarted] = useState(false)
   const [saving, setSaving]           = useState(false)
   const [saved, setSaved]             = useState(false)
+  const [resetting, setResetting]     = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -357,6 +437,14 @@ export default function BodyQuiz() {
   async function handleSave() {
     setSaving(true)
 
+    // Mark all previous body attempts as not current
+    await supabase
+      .from('quiz_attempts')
+      .update({ is_current: false })
+      .eq('user_id', user.id)
+      .eq('quiz_type', 'body')
+      .eq('is_current', true)
+
     const { error: attemptError } = await supabase.from('quiz_attempts').insert({
       user_id:      user.id,
       quiz_type:    'body',
@@ -364,7 +452,7 @@ export default function BodyQuiz() {
       result_json:  { type: newResult.type, confidence: newResult.confidence },
       is_current:   true,
     })
-    if (attemptError) console.error('[BodyQuiz] quiz_attempts error:', attemptError)
+    if (attemptError) { console.error('[BodyQuiz] quiz_attempts error:', attemptError); setSaving(false); return }
 
     const { error: summaryError } = await supabase.from('style_summary').upsert(
       { user_id: user.id, body_type: newResult.type },
@@ -376,12 +464,35 @@ export default function BodyQuiz() {
     setSaved(true)
   }
 
+  async function handleReset() {
+    setResetting(true)
+
+    await supabase
+      .from('quiz_attempts')
+      .update({ is_current: false })
+      .eq('user_id', user.id)
+      .eq('quiz_type', 'body')
+
+    await supabase.from('style_summary').upsert(
+      { user_id: user.id, body_type: null },
+      { onConflict: 'user_id' }
+    )
+
+    setSavedResult(null)
+    setNewResult(null)
+    setNewAnswers(null)
+    setSaved(false)
+    setSkipPrev(false)
+    setQuizStarted(false)
+    setResetting(false)
+  }
+
   function handleRetakeFromResult() {
     setNewResult(null)
     setNewAnswers(null)
     setSaved(false)
     setSkipPrev(true)
-    setQuizStarted(true) // skip intro when retaking immediately after result
+    setQuizStarted(true)
   }
 
   if (loading) return null
@@ -393,8 +504,10 @@ export default function BodyQuiz() {
         confidence={newResult.confidence}
         onSave={handleSave}
         onRetake={handleRetakeFromResult}
+        onReset={handleReset}
         saving={saving}
         saved={saved}
+        resetting={resetting}
       />
     )
   }
@@ -404,6 +517,8 @@ export default function BodyQuiz() {
       <PreviousResultScreen
         resultType={savedResult}
         onRetake={() => { setSkipPrev(true); setQuizStarted(false) }}
+        onReset={handleReset}
+        resetting={resetting}
       />
     )
   }

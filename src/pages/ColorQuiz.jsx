@@ -46,6 +46,7 @@ const QUESTIONS = [
       { value: 'bright_white', label: 'Bright white — it makes me look fresh and alive' },
       { value: 'cream_white',  label: 'Cream or off-white — bright white washes me out' },
       { value: 'both_whites',  label: 'Both work pretty well honestly' },
+      { value: 'q3_idk',       label: "I'm not sure", escape: true },
     ],
   },
   {
@@ -57,6 +58,7 @@ const QUESTIONS = [
       { value: 'cool_compliment', label: 'Something cool toned — blues, pinks, purples, or grey' },
       { value: 'warm_compliment', label: 'Something warm toned — oranges, browns, yellows, or olive' },
       { value: 'both_compliment', label: 'I honestly get compliments in both' },
+      { value: 'q4_idk',          label: "I'm not sure", escape: true },
     ],
   },
   {
@@ -94,6 +96,7 @@ const QUESTIONS = [
       { value: 'tan_golden', label: 'I tan gradually and golden' },
       { value: 'tan_deeply', label: 'I tan quickly and deeply — my skin gets very dark' },
       { value: 'deep_skin',  label: "I have deeper skin that rarely burns" },
+      { value: 'q7_idk',     label: "I'm not sure", escape: true },
     ],
   },
   {
@@ -105,6 +108,7 @@ const QUESTIONS = [
       { value: 'very_little_c', label: 'Very little — everything is similar in tone and depth' },
       { value: 'moderate_c',    label: "Moderate — there's some difference but nothing dramatic" },
       { value: 'high_c',        label: "High — there's a striking difference between my features" },
+      { value: 'q8_idk',        label: "I'm not sure", escape: true },
     ],
   },
   {
@@ -116,6 +120,7 @@ const QUESTIONS = [
       { value: 'overwhelm',    label: 'They overwhelm me — I look better in softer muted tones' },
       { value: 'suit_well',    label: 'They suit me perfectly — I can carry a bold color easily' },
       { value: 'depends_bold', label: "Depends on the color — some bold shades work, others don't" },
+      { value: 'q9_idk',       label: "I'm not sure", escape: true },
     ],
   },
   {
@@ -127,6 +132,7 @@ const QUESTIONS = [
       { value: 'dark_better',  label: 'Dark colors — they make me look more defined and awake' },
       { value: 'light_better', label: 'Light colors — they make me look fresh and open' },
       { value: 'both_depth',   label: 'Both work about the same for me' },
+      { value: 'q10_idk',      label: "I'm not sure", escape: true },
     ],
   },
 ]
@@ -189,20 +195,13 @@ const DEPTH = {
   deep_skin:  2,
 }
 
-// Maps each answer value to a contrast score: 0 = low, 1 = medium, 2 = high.
-const CONTRAST = {
-  // Q8 — contrast between features
-  very_little_c: 0,
-  moderate_c:    1,
-  high_c:        2,
-  // Q9 — bold colors (proxy for contrast tolerance)
-  overwhelm:    0,
-  suit_well:    2,
-  depends_bold: 1,
-  // Q10 — dark vs light near face
-  dark_better:  2,
-  light_better: 0,
-  both_depth:   1,
+
+const IDK_VALUES = new Set(['q3_idk', 'q4_idk', 'q7_idk', 'q8_idk', 'q9_idk', 'q10_idk'])
+
+// Returns true if the user answered "I'm not sure" on 4 or more of the 6 eligible questions.
+function isLowConfidence(answers) {
+  const idkCount = Object.values(answers).filter(v => IDK_VALUES.has(v)).length
+  return idkCount >= 4
 }
 
 function calculateResult(answers) {
@@ -231,33 +230,31 @@ function calculateResult(answers) {
     : 1  // default to medium
   const isDeep = depthScore >= 1.2  // above medium tips into deep
 
-  // ── Axis 3: contrast ──────────────────────────────────────────
-  const contrastVals = vals.filter(v => CONTRAST[v] !== undefined)
-  const contrastScore = contrastVals.length
-    ? contrastVals.reduce((sum, v) => sum + CONTRAST[v], 0) / contrastVals.length
-    : 1
-  const isHighContrast = contrastScore >= 1.4
+  // ── Confidence — based on strength of the warmth signal ───────
+  const confidence = Math.abs(warmthScore) >= 4 ? 'Strong match' : 'Likely match'
 
   // ── Season resolution ─────────────────────────────────────────
-  if (isWarm && !isDeep)                       return 'Spring'
-  if (!isWarm && !isDeep)                      return 'Summer'
-  if (isWarm && isDeep)                        return 'Autumn'
-  if (!isWarm && isDeep && isHighContrast)     return 'Winter'
-  if (!isWarm && isDeep)                       return 'Winter'  // deep cool always resolves to Winter
-  return 'Summer'  // unreachable fallback
+  let season
+  if (isWarm && !isDeep)                   season = 'Spring'
+  else if (!isWarm && !isDeep)             season = 'Summer'
+  else if (isWarm && isDeep)               season = 'Autumn'
+  else if (!isWarm && isDeep)              season = 'Winter'
+  else                                     season = 'Summer'  // unreachable fallback
+
+  return { season, confidence }
 }
 
 // ── Result content ────────────────────────────────────────────────
 
 const RESULTS = {
   Spring: {
-    heading:    'Your palette leans warm and clear',
+    heading:     'Your palette leans warm and clear',
     seasonLabel: 'Spring palette',
-    palette: ['#E8735A', '#F4A07A', '#F5C88A', '#F9E4A0', '#6DC4B0', '#8DC87A', '#C8956A'],
+    palette: ['#E8705A', '#F5A07A', '#FBE8C8', '#F5C840', '#60C4A8', '#90C870', '#C8956A'],
     workWell: [
       'Clear warm tones like coral, peach, and warm salmon may make your features look more open and alive.',
-      'Golden yellows, warm ivories, and light camel worn close to the face may add a natural warmth and glow.',
-      'Clear aquas and warm teals may work surprisingly well — the warmth in these shades tends to complement rather than compete.',
+      'Golden yellows, warm creams, and light camel worn close to the face may add a natural warmth and glow.',
+      'Clear aquas and warm turquoise tones may work surprisingly well — the brightness in these shades tends to complement rather than compete.',
     ],
     lessHarmonious: [
       'Very dark shades like black or dark charcoal near the face may feel heavy or harsh against your colouring.',
@@ -266,47 +263,47 @@ const RESULTS = {
     teaser: 'True Spring or Light Spring?',
   },
   Summer: {
-    heading:    'Your palette leans soft and cool',
+    heading:     'Your palette leans soft and cool',
     seasonLabel: 'Summer palette',
-    palette: ['#C4788A', '#A890C4', '#7AAEC8', '#B4C4A8', '#9490B4', '#A0AEC0', '#C8A0B0'],
+    palette: ['#C47888', '#B0A0C8', '#B8B4BE', '#A89890', '#9AB4C8', '#9A6888', '#F4F0F4'],
     workWell: [
-      'Dusty and softened cool tones — muted rose, lavender, powder blue, and soft mauve — may sit most harmoniously near your face.',
-      'Charcoal, cool taupe, and blue-grey may work better than black as neutrals, keeping the look soft rather than stark.',
-      'Dusty sage, muted teal, and softened berry tones may bring out the cool clarity in your features without overwhelming them.',
+      'Dusty and softened cool tones — muted rose, lavender, powder blue, and soft mauve — may flatter you most when worn near your face.',
+      'Charcoal, cool taupe, and blue-grey may work better than stark black as neutrals, keeping the overall look soft and harmonious.',
+      'Dusty berry, softened lavender, and muted cool tones may bring out the cool clarity in your features without overwhelming them.',
     ],
     lessHarmonious: [
-      'Very warm oranges, rusts, and olive greens may feel less harmonious near your face — they can pull colour away from your features.',
-      'Bright, highly saturated shades or strong black-and-white contrast may overpower the natural softness of your colouring.',
+      'Very warm oranges, rusts, and olive greens near your face may feel less harmonious — they can draw colour away from your features.',
+      'Highly saturated brights or strong black-and-white contrast may overpower the natural softness of your colouring.',
     ],
     teaser: 'Light Summer or Soft Summer?',
   },
   Autumn: {
-    heading:    'Your palette leans warm and muted',
+    heading:     'Your palette leans warm and muted',
     seasonLabel: 'Autumn palette',
-    palette: ['#B85C38', '#C8703A', '#8A8030', '#B87848', '#5A7840', '#986038', '#C8A030'],
+    palette: ['#C05840', '#C87038', '#848030', '#986040', '#B84830', '#C8A030', '#386858'],
     workWell: [
       'Earthy warm tones like terracotta, burnt orange, rust, and camel may look richly harmonious against your colouring.',
-      'Olive, forest green, and warm khaki may ground your look in a way that cool greens rarely achieve for you.',
-      'Warm mustard, deep warm brown, and muted brick red may add depth without looking harsh or overly saturated.',
+      'Olive, dark teal, and warm khaki may ground your look in a way that cool or bright greens rarely achieve for you.',
+      'Warm mustard, deep warm brown, and muted brick red may add depth without feeling harsh or overly saturated.',
     ],
     lessHarmonious: [
-      'Icy pastels and cool-based pinks or lavenders may feel flat or slightly off near your face — the cool undertone can clash with your warmth.',
-      'Bright, clear, or neon shades may feel less harmonious than their muted counterparts — warmth and softness tend to suit you more than clarity.',
+      'Icy pastels and cool-based pinks or lavenders may feel flat or slightly off near your face — the cool undertone can clash with your natural warmth.',
+      'Extremely bright or clear shades may feel less harmonious than their muted counterparts — warmth and softness tend to suit you more than high clarity.',
     ],
     teaser: 'Soft Autumn or Deep Autumn?',
   },
   Winter: {
-    heading:    'Your palette leans cool and bold',
+    heading:     'Your palette leans cool and bold',
     seasonLabel: 'Winter palette',
-    palette: ['#C02040', '#1840A8', '#0A8040', '#101010', '#F8F8F8', '#9810A0', '#E01880'],
+    palette: ['#CC2040', '#1840AA', '#0A8040', '#0A0A0A', '#F8F8F8', '#7A1090', '#E01888'],
     workWell: [
-      'Bold, clear cool tones — true red, cobalt blue, and emerald — may look striking and intentional rather than overwhelming.',
-      'Strong neutrals like black and pure white may sit very naturally against your colouring, especially worn near the face.',
-      'Deep jewel tones and cool-based brights like deep plum and hot pink may give your look a clarity that softer shades don\'t quite achieve.',
+      'Bold, clear cool tones — true red, cobalt blue, and emerald — may look striking and intentional rather than overwhelming against your colouring.',
+      'Strong neutrals like black and pure white may sit very naturally near your face, especially when worn with intention.',
+      'Deep jewel tones and cool-based brights like deep plum and hot pink may give your look a clarity that softer or muted shades don\'t quite achieve.',
     ],
     lessHarmonious: [
-      'Warm oranges, peachy tones, and golden yellows near the face may feel less harmonious — they can muddy rather than enhance your contrast.',
-      'Heavily muted or earthy shades may soften your natural contrast in a way that feels dull rather than polished.',
+      'Warm oranges, peachy tones, and golden yellows near the face may feel less harmonious — they can muddy rather than enhance your natural contrast.',
+      'Heavily muted or earthy shades may soften your contrast in a way that feels dull rather than polished.',
     ],
     teaser: 'True Winter or Deep Winter?',
   },
@@ -331,14 +328,22 @@ function PaletteStrip({ colors }) {
 
 // ── Upgrade teaser ────────────────────────────────────────────────
 
-function UpgradeTeaser() {
+function UpgradeTeaser({ seasonLabel }) {
   return (
     <div className={styles.teaser}>
-      <p className={styles.teaserEyebrow}>Want to go deeper?</p>
+      <div className={styles.teaserLockRow}>
+        <span className={styles.teaserLockIcon} aria-hidden="true">⊘</span>
+        <p className={styles.teaserEyebrow}>Want to go deeper?</p>
+      </div>
       <p className={styles.teaserBody}>
         Your full 12-season analysis gives you a precise subtype — like{' '}
         <em>Soft Autumn</em> or <em>Deep Winter</em> — with a more tailored palette.
       </p>
+      <div className={styles.teaserPreview} aria-hidden="true">
+        <span className={styles.teaserPreviewPill}>Soft {seasonLabel?.replace(' palette', '')}</span>
+        <span className={styles.teaserPreviewPill}>True {seasonLabel?.replace(' palette', '')}</span>
+        <span className={styles.teaserPreviewPill}>Deep {seasonLabel?.replace(' palette', '')}</span>
+      </div>
       <Button variant="ghost" disabled>
         Coming soon
       </Button>
@@ -375,9 +380,101 @@ function ResultContent({ result }) {
   )
 }
 
+// ── Result actions ────────────────────────────────────────────────
+
+function ColorResultActions({ onSave, onRetake, onReset, saving, saved, resetting }) {
+  const [confirmReset, setConfirmReset] = useState(false)
+
+  return (
+    <div className={styles.resultActions}>
+      {saved ? (
+        <p className={styles.savedConfirmation} role="status">
+          <span aria-hidden="true">✓</span> Result saved
+        </p>
+      ) : (
+        <Button fullWidth loading={saving} onClick={onSave}>
+          Save result
+        </Button>
+      )}
+
+      <Link to="/profile" className={styles.fullWidth}>
+        <Button variant="ghost" fullWidth>Continue to profile</Button>
+      </Link>
+
+      <div className={styles.retakeBlock}>
+        <Button variant="ghost" fullWidth onClick={onRetake}>Retake quiz</Button>
+      </div>
+
+      {confirmReset ? (
+        <div className={styles.resetConfirm}>
+          <p className={styles.resetConfirmText}>
+            Resetting removes your current result so you can start this section fresh. Your previous results are never deleted.
+          </p>
+          <Button variant="destructive" fullWidth loading={resetting} onClick={onReset}>
+            Yes, reset this section
+          </Button>
+          <button type="button" className={styles.textLink} onClick={() => setConfirmReset(false)}>
+            Cancel
+          </button>
+        </div>
+      ) : (
+        <div className={styles.resetBlock}>
+          <button type="button" className={styles.textLink} onClick={() => setConfirmReset(true)}>
+            Reset this section
+          </button>
+        </div>
+      )}
+
+      <Link to="/analyze" className={styles.textLink}>
+        Back to Analyze
+      </Link>
+    </div>
+  )
+}
+
+function ColorPreviousResultActions({ onRetake, onReset, resetting }) {
+  const [confirmReset, setConfirmReset] = useState(false)
+
+  return (
+    <div className={styles.resultActions}>
+      <Link to="/profile" className={styles.fullWidth}>
+        <Button variant="ghost" fullWidth>Continue to profile</Button>
+      </Link>
+
+      <div className={styles.retakeBlock}>
+        <Button variant="ghost" fullWidth onClick={onRetake}>Retake quiz</Button>
+      </div>
+
+      {confirmReset ? (
+        <div className={styles.resetConfirm}>
+          <p className={styles.resetConfirmText}>
+            Resetting removes your current result so you can start this section fresh. Your previous results are never deleted.
+          </p>
+          <Button variant="destructive" fullWidth loading={resetting} onClick={onReset}>
+            Yes, reset this section
+          </Button>
+          <button type="button" className={styles.textLink} onClick={() => setConfirmReset(false)}>
+            Cancel
+          </button>
+        </div>
+      ) : (
+        <div className={styles.resetBlock}>
+          <button type="button" className={styles.textLink} onClick={() => setConfirmReset(true)}>
+            Reset this section
+          </button>
+        </div>
+      )}
+
+      <Link to="/analyze" className={styles.textLink}>
+        Back to Analyze
+      </Link>
+    </div>
+  )
+}
+
 // ── Result screen ─────────────────────────────────────────────────
 
-function ResultScreen({ season, onSave, onRetake, saving, saved }) {
+function ResultScreen({ season, confidence, onSave, onRetake, onReset, saving, saved, resetting, lowConfidence }) {
   const result = RESULTS[season] ?? RESULTS.Summer
 
   return (
@@ -388,39 +485,34 @@ function ResultScreen({ season, onSave, onRetake, saving, saved }) {
           <p className={styles.resultEyebrow}>Your color analysis</p>
           <h1 className={styles.resultLabel}>{result.heading}</h1>
           <p className={styles.resultSeasonLabel}>{result.seasonLabel}</p>
+          {confidence && <span className={styles.confidence}>{confidence}</span>}
         </div>
 
         <ResultContent result={result} />
 
-        <div className={styles.resultActions}>
-          {saved ? (
-            <p className={styles.savedConfirmation} role="status">
-              <span aria-hidden="true">✓</span> Result saved
-            </p>
-          ) : (
-            <Button fullWidth loading={saving} onClick={onSave}>
-              Save result
-            </Button>
-          )}
-          <Button variant="ghost" fullWidth onClick={onRetake}>
-            Retake quiz
-          </Button>
-          <button type="button" className={styles.resetNote} onClick={onRetake}>
-            Changed your hair color? Retake this section to update your palette.
-          </button>
-          <Link to="/analyze" className={styles.textLink}>
-            Back to Analyze
-          </Link>
-        </div>
+        {lowConfidence && (
+          <p className={styles.lowConfidenceNote}>
+            Your result is our best read based on your answers — color analysis can be tricky to self-assess. You can always retake this as you learn more about your coloring.
+          </p>
+        )}
 
-        <UpgradeTeaser />
+        <ColorResultActions
+          onSave={onSave}
+          onRetake={onRetake}
+          onReset={onReset}
+          saving={saving}
+          saved={saved}
+          resetting={resetting}
+        />
+
+        <UpgradeTeaser seasonLabel={result.seasonLabel} />
 
       </div>
     </div>
   )
 }
 
-function PreviousResultScreen({ season, onRetake }) {
+function PreviousResultScreen({ season, onRetake, onReset, resetting }) {
   const result = RESULTS[season] ?? RESULTS.Summer
 
   return (
@@ -435,19 +527,13 @@ function PreviousResultScreen({ season, onRetake }) {
 
         <ResultContent result={result} />
 
-        <div className={styles.resultActions}>
-          <Button variant="ghost" fullWidth onClick={onRetake}>
-            Retake quiz
-          </Button>
-          <button type="button" className={styles.resetNote} onClick={onRetake}>
-            Changed your hair color? Retake this section to update your palette.
-          </button>
-          <Link to="/analyze" className={styles.textLink}>
-            Back to Analyze
-          </Link>
-        </div>
+        <ColorPreviousResultActions
+          onRetake={onRetake}
+          onReset={onReset}
+          resetting={resetting}
+        />
 
-        <UpgradeTeaser />
+        <UpgradeTeaser seasonLabel={result.seasonLabel} />
 
       </div>
     </div>
@@ -489,11 +575,12 @@ export default function ColorQuiz() {
   const [loading, setLoading]         = useState(true)
   const [quizStarted, setQuizStarted] = useState(false)
   const [savedResult, setSavedResult] = useState(null)
-  const [newResult, setNewResult]     = useState(null)
+  const [newResult, setNewResult]     = useState(null)  // { season, confidence }
   const [newAnswers, setNewAnswers]   = useState(null)
   const [skipPrev, setSkipPrev]       = useState(false)
   const [saving, setSaving]           = useState(false)
   const [saved, setSaved]             = useState(false)
+  const [resetting, setResetting]     = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -510,31 +597,61 @@ export default function ColorQuiz() {
   }, [user.id])
 
   function handleComplete(answers) {
-    const season = calculateResult(answers)
+    const result = calculateResult(answers)  // returns { season, confidence }
     setNewAnswers(answers)
-    setNewResult(season)
+    setNewResult(result)
   }
 
   async function handleSave() {
     setSaving(true)
 
+    await supabase
+      .from('quiz_attempts')
+      .update({ is_current: false })
+      .eq('user_id', user.id)
+      .eq('quiz_type', 'color')
+      .eq('is_current', true)
+
     const { error: attemptError } = await supabase.from('quiz_attempts').insert({
       user_id:      user.id,
       quiz_type:    'color',
       answers_json: newAnswers,
-      result_json:  { season: newResult },
+      result_json:  { season: newResult.season, confidence: newResult.confidence },
       is_current:   true,
     })
-    if (attemptError) console.error('[ColorQuiz] quiz_attempts error:', attemptError)
+    if (attemptError) { console.error('[ColorQuiz] quiz_attempts error:', attemptError); setSaving(false); return }
 
     const { error: summaryError } = await supabase.from('style_summary').upsert(
-      { user_id: user.id, color_season: newResult },
+      { user_id: user.id, color_season: newResult.season, color_confidence: newResult.confidence },
       { onConflict: 'user_id' }
     )
     if (summaryError) console.error('[ColorQuiz] style_summary error:', summaryError)
 
     setSaving(false)
     setSaved(true)
+  }
+
+  async function handleReset() {
+    setResetting(true)
+
+    await supabase
+      .from('quiz_attempts')
+      .update({ is_current: false })
+      .eq('user_id', user.id)
+      .eq('quiz_type', 'color')
+
+    await supabase.from('style_summary').upsert(
+      { user_id: user.id, color_season: null },
+      { onConflict: 'user_id' }
+    )
+
+    setSavedResult(null)
+    setNewResult(null)
+    setNewAnswers(null)
+    setSaved(false)
+    setSkipPrev(false)
+    setQuizStarted(false)
+    setResetting(false)
   }
 
   function handleRetakeFromResult() {
@@ -549,11 +666,15 @@ export default function ColorQuiz() {
   if (newResult) {
     return (
       <ResultScreen
-        season={newResult}
+        season={newResult.season}
+        confidence={newResult.confidence}
         onSave={handleSave}
         onRetake={handleRetakeFromResult}
+        onReset={handleReset}
         saving={saving}
         saved={saved}
+        resetting={resetting}
+        lowConfidence={newAnswers ? isLowConfidence(newAnswers) : false}
       />
     )
   }
@@ -563,6 +684,8 @@ export default function ColorQuiz() {
       <PreviousResultScreen
         season={savedResult}
         onRetake={() => { setSkipPrev(true); setQuizStarted(false) }}
+        onReset={handleReset}
+        resetting={resetting}
       />
     )
   }
